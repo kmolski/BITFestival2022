@@ -1,0 +1,13 @@
+admin:
+  username: ${ADMIN_USER}
+  password: ${ADMIN_PASS}
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/changelog_master.yaml
+    url: jdbc:postgresql://${DB_HOST}/${DB_NAME}
+    user: ${DB_USER}
+    password: ${DB_PASS}
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
