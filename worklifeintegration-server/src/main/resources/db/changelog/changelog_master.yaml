@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1_add_tasks_and_places
+      author: kmolski
+      changes:
+        - createTable:
+            tableName: place
+            columns:
+              - column:
+                  name: id
+                  type: int generated always as identity
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                  defaultValue: ''
+              - column:
+                  name: transport_time_minutes
+                  type: int
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: int generated always as identity
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: start_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: place_id
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: FK_task_place_id
+            baseTableName: task
+            baseColumnNames: place_id
+            referencedTableName: place
+            referencedColumnNames: id
+            onDelete: cascade
