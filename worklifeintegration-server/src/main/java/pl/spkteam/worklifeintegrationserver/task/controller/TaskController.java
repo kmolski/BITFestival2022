@@ -8,6 +8,7 @@ import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,15 +30,15 @@ public class TaskController {
     @GetMapping
     public Iterable<Task> getTasksFromDay(LocalDateTime date) {
         Iterable<Task> allTasks = taskRepository.findAll();
-        Iterable<Task> tasksFromDay = new ArrayList<Task>();
+        Collection<Task> tasksFromDay = new ArrayList<>();
         for (Task t : allTasks) {
-            currentStartTime = t.getStartTime();
-            if (currentStartTime.getYear() == date.getYear() && currentStartTime.getMonthValue() ==
-                    date.getMonthValue() && currentStartTime.getDay() == date.getDay()){
+            LocalDateTime currentStartTime = t.getStartTime();
+            if (currentStartTime.getYear() == date.getYear() && currentStartTime.getMonthValue() == date.getMonthValue()
+                    && currentStartTime.getDayOfMonth() == date.getDayOfMonth()) {
                 tasksFromDay.add(t);
             }
         }
-
+        return tasksFromDay;
     }
 
     @PostMapping
