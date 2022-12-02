@@ -2,10 +2,10 @@ package pl.spkteam.worklifeintegrationserver.task.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,14 +20,14 @@ public class TaskController {
     private final TaskRepository taskRepository;
 
     @GetMapping
-    public List<Task> getTasks(@RequestParam(value = "start", required = false) Long start,
-                               @RequestParam(value = "end", required = false) Long end) {
-        var startTime = Optional.ofNullable(start).map(Instant::ofEpochMilli).orElse(Instant.MIN);
-        var endTime = Optional.ofNullable(end).map(Instant::ofEpochMilli).orElse(Instant.MAX);
+    public List<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
+                               @RequestParam(value = "end", required = false) LocalDateTime end) {
+        var startTime = Optional.ofNullable(start).orElse(LocalDateTime.MIN);
+        var endTime = Optional.ofNullable(end).orElse(LocalDateTime.MAX);
         return taskRepository.findInTimeInterval(startTime, endTime);
     }
 
-    @GetMapping
+    @GetMapping("/fromDay")
     public Iterable<Task> getTasksFromDay(LocalDateTime date) {
         Iterable<Task> allTasks = taskRepository.findAll();
         Collection<Task> tasksFromDay = new ArrayList<>();
@@ -42,13 +42,31 @@ public class TaskController {
     }
 
     @PostMapping
-    public void createTask(Task task) {
-        taskRepository.save(task);
-    }
+    public Task createTask(Task task) {
 
+        //if jest wydarzenie
+        // dodatkowo zmien task poprzedni - jak go znajdziemy -
+        Collection<Task> oldTasks = getTasks(); //dodac przedzial
+        if (!oldTasks.isEmpty()) {
+            // czy nie wykorzystujac z getTasks - start i end wycaigniemy z parametrow task
+            // sprawdzic czy task jest przestawialny
+            if (checkIfAdjustableTask(oldTask)) {
+                // taskRepository.save(oldTask);
+                // stworz nowy task na przestawienie pracy
+                // taskRepository.save(newTask);
+            } else return null;
+        }
+        //po prostu nie ma zadnych wydarzen w przedziale
+        taskRepository.save(task);
+        return task;
+    }
 
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable("id") Long id) {
         taskRepository.deleteById(id);
+    }
+
+    private boolean checkIfAdjustableTask(Task task) {
+        return !task.getTaskPriority().equals(Priority.HIGH);
     }
 }
