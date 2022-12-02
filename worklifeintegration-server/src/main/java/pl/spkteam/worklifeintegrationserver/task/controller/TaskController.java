@@ -2,11 +2,13 @@ package pl.spkteam.worklifeintegrationserver.task.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
