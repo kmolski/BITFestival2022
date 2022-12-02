@@ -20,5 +20,5 @@ jobs:
         distribution: 'corretto'
     
     - name: Build Spring Boot JAR with Gradle
-      working-directory: ./web-app
+      working-directory: ./worklifeintegration-server
       run: ./gradlew bootJar
