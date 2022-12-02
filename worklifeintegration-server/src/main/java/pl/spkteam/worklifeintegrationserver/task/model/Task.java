@@ -3,12 +3,16 @@ package pl.spkteam.worklifeintegrationserver.task.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalEntity;
+import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class Task {
+@StartTimeBeforeEndTime
+//@NoOverlapWithExistingTask
+public class Task implements TimeIntervalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
