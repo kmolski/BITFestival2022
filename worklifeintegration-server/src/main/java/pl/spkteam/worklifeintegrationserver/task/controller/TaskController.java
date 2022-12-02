@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
     @GetMapping
     public List<Task> getTasks(@RequestParam(value = "start", required = false) Long start,
