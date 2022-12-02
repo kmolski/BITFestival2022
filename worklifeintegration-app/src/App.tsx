@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { useInterpret } from '@xstate/react';
+import { mainMachine } from './machines/main';
+
+export const GlobalStateContext = createContext({});
 
 function App() {
+  const mainService = useInterpret(mainMachine);
+  
   return (
-    <div className="App">
+    <GlobalStateContext.Provider value={{ mainService }}>
+      <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -20,6 +27,7 @@ function App() {
         </a>
       </header>
     </div>
+    </GlobalStateContext.Provider>
   );
 }
 
