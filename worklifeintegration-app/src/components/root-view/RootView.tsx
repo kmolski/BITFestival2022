@@ -10,7 +10,9 @@ function RootView(props: {state: any, send: any
   return (
     <div className="RootView">
         <Stack direction="row" height="100%" spacing={2}>
+        {/* <Stack direction="row" spacing={2}> */}
             <div className='Grid'><NestedGrid taskData={props.state.context.task_data}/></div>
+            {/* <Stack height="100%" direction="column" spacing={2}> */}
             <Stack height="100%" direction="column" spacing={2}>
                 <AddTask/>
             </Stack>

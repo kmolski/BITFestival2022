@@ -1,4 +1,9 @@
 .Column {
     background-color: rgb(146, 147, 149);
+    height:100%;
+    padding:0;
   }
   
+.grid{
+  height:100%;
+}

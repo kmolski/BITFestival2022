@@ -36,7 +36,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
 
     return (
         <Grid height="100%" ref={containerRef} item xs={1.5} sx={{bgcolor: 'blue' }}>
-            <Box sx={{ height: "100%", width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+            <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
                 <Box sx={{ my: 3, mx: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
