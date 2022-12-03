@@ -118,7 +118,7 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
           <TextField id="outlined-basic" className='Paded'
           label="Name" variant="outlined" onChange={handleTitleChange}/>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Box m={0.1} pt={0.1}><DesktopDatePicker
+            <Box m={0} pt={1}><DesktopDatePicker
                 className='Paded'
                 label="Date"
                 inputFormat="MM/DD/YYYY"
@@ -126,13 +126,13 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
                 /></Box> 
-                <TimePicker
+                <Box m={0} pt={1}><TimePicker
                 className='Paded'
                 label="Start time"
                 value={timeStart}
                 onChange={handleChangeTimeStart}
                 renderInput={(params) => <TextField {...params} />}
-                />
+                /></Box> 
                 <TimePicker
                 className='Paded'
                 label="End time"

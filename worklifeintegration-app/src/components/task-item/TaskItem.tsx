@@ -26,8 +26,8 @@ const style = {
 interface Dictionary<T> {
   [Key: string]: T;
 }
-const dictionary_of_colors: any = {"LOW":"green", "MEDIUM":"cyan", "HIGH":"red"};
-export function TaskItem(props: {task: Task, height:number, }) {
+const dictionary_of_colors: any = {"LOW":"green", "MEDIUM": '#3cc6fc', "HIGH":"red"};
+export function TaskItem(props: {task: Task, height:number, state: stateType, send: sendType}) {
   const [show, setShow] = useState(false);
   const hour_start = props.task.start.format("H:mm")
   const hour_end = props.task.end.format("H:mm")
@@ -38,7 +38,7 @@ export function TaskItem(props: {task: Task, height:number, }) {
 
   return (
     <Card   elevation={3} sx={{ width: '100%', height: '100%', maxWidth: 200, 
-    maxHeight:props.height, bgcolor: '#3cc6fc' }} onClick={handleOpen}>
+    maxHeight:props.height, bgcolor: dictionary_of_colors[props.task.taskPriority] }} onClick={handleOpen}>
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h6" component="div">
@@ -47,7 +47,7 @@ export function TaskItem(props: {task: Task, height:number, }) {
           </Grid>
         </Grid>
         <Typography color="text.secondary" variant="body2">
-          Godzina taska
+          {hour_start + " - " + hour_end}
         </Typography>
         <Modal
         open={open}
