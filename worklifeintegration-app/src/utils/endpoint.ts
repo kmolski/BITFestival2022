@@ -34,7 +34,7 @@ export function suggestTask(props: {title: string}): Promise<any> {
 }
 
 export function commitTask(props: {blob: any}): Promise<any> {
-    return fetch(LINK_TASKS,
+    return fetch(LINK_TASKS + '/commit',
         {
             method: 'POST',
             headers: { 'Accept': '*/*', 'Content-Type': 'application/json'},
