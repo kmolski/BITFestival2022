@@ -70,9 +70,10 @@ public class TaskService {
                 .build();
     }
 
-    public Collection<Task> changeAlreadyExistingTasks(Task task, Collection<Task> oldTasks, Collection<Task> changedTasksToConfirm) {
+    public Collection<Task> changeAlreadyExistingTasks(Task task, Collection<Task> oldTasks) {
         LocalDateTime startTime = task.getStartTime();
         LocalDateTime endTime = task.getEndTime();
+        Collection<Task> changedTasksToConfirm = new ArrayList<>();
         for (Task oldTask : oldTasks) {
             LocalDateTime oldStartTime = oldTask.getStartTime();
             LocalDateTime oldEndTime = oldTask.getEndTime();
@@ -104,6 +105,7 @@ public class TaskService {
             }
             changedTasksToConfirm.add(oldTask);
             changedTasksToConfirm.add(newTaskFromOld);
+            changedTasksToConfirm.add(task);
         }
         return changedTasksToConfirm;
     }
