@@ -7,8 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
+import pl.spkteam.worklifeintegrationserver.task.mapper.TaskMapper;
 import pl.spkteam.worklifeintegrationserver.task.model.*;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
@@ -18,12 +20,10 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
-
 
     private final LocalDateTime beforeDateTime = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 7, 30, 0);
