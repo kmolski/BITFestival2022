@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.*;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
+import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -20,6 +20,8 @@ public class TaskController {
 
     private final TaskRepository taskRepository;
 
+    private final TaskService taskService;
+
     @GetMapping
     public List<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
                                @RequestParam(value = "end", required = false) LocalDateTime end) {
@@ -28,41 +30,35 @@ public class TaskController {
 
     @GetMapping("/fromDay")
     public Iterable<Task> getTasksFromDay(LocalDateTime date) {
-        Iterable<Task> allTasks = taskRepository.findAll();
-        Collection<Task> tasksFromDay = new ArrayList<>();
-        for (Task t : allTasks) {
-            LocalDateTime currentStartTime = t.getStartTime();
-            if (currentStartTime.getYear() == date.getYear() && currentStartTime.getMonthValue() == date.getMonthValue()
-                    && currentStartTime.getDayOfMonth() == date.getDayOfMonth()) {
-                tasksFromDay.add(t);
-            }
-        }
-        return tasksFromDay;
+        return taskService.getTasksFromDay(date);
     }
 
     @PostMapping
-    public Task createTask(Task task) {
-
-        //if jest wydarzenie
-        // dodatkowo zmien task poprzedni - jak go znajdziemy -
-        Collection<Task> oldTasks = getTasks(); //dodac przedzial
+    public Collection<Task> createTask(Task task) {
+        LocalDateTime startTime = task.getStartTime();
+        LocalDateTime endTime = task.getEndTime();
+        Collection<Task> oldTasks = getTasks(task.getStartTime(), task.getEndTime());
+        Collection<Task> changedTasksToConfirm = new ArrayList<>();
         if (!oldTasks.isEmpty()) {
-            // czy nie wykorzystujac z getTasks - start i end wycaigniemy z parametrow task
-            // sprawdzic czy task jest przestawialny
-            if (checkIfAdjustableTask(oldTask)) {
-                // taskRepository.save(oldTask);
-                // stworz nowy task na przestawienie pracy
-                // taskRepository.save(newTask);
-            } else return null;
+            //if (!oldTasks.stream().filter(this::checkIfAdjustableTask).allMatch(true)) {
+           //     return null;
+           // }
+            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, startTime, endTime, oldTasks, changedTasksToConfirm));
         }
         //po prostu nie ma zadnych wydarzen w przedziale
-        taskRepository.save(task);
-        return task;
+        changedTasksToConfirm.add(task);
+        return changedTasksToConfirm;
     }
+
 
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable("id") Long id) {
         taskRepository.deleteById(id);
+    }
+
+    @PostMapping
+    public void confirmCreatingTasks(Collection<Task> tasks) {
+        tasks.forEach(taskRepository::save);
     }
 
     private boolean checkIfAdjustableTask(Task task) {
