@@ -38,7 +38,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskChangelistDto createTask(@Valid TaskDto taskDto) {
+    public TaskChangelistDto createTask(@RequestBody @Valid TaskDto taskDto) {
         var task = taskMapper.mapTaskDtoToEntity(taskDto);
         var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         if (taskService.canTaskBePlaced(overlappingTasks)) {
