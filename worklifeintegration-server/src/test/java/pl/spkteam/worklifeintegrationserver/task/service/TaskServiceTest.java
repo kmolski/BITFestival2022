@@ -33,7 +33,6 @@ class TaskServiceTest {
             Month.DECEMBER, 3, 16, 0, 0);
 
 
-
     private final Duration oneHour = Duration.ofMinutes(60);
 
     private final Task testTask = createExampleTask();
