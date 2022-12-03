@@ -2,16 +2,21 @@ package pl.spkteam.worklifeintegrationserver.task.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalEntity;
 import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @StartTimeBeforeEndTime
-//@NoOverlapWithExistingTask
 public class Task implements TimeIntervalEntity {
 
     @Id
@@ -26,14 +31,17 @@ public class Task implements TimeIntervalEntity {
 
     //jesli polaczenie nie tylko z biura to sie zastanowic
     @NotNull
-    @ManyToOne // tu dodać jakieś joincolumn czy coś
+    @ManyToOne
     private Place place;
 
+    @NotNull
+    @ManyToOne
+    private PlacementLimit placementLimit;
+
+    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Priority taskPriority;
 
     @Enumerated(EnumType.ORDINAL)
     private Category category;
-
-    private boolean canBeSplit;
 }
