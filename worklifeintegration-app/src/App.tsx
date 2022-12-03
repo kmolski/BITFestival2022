@@ -4,6 +4,7 @@ import './App.css';
 import { useInterpret } from '@xstate/react';
 import { mainMachine } from './machines/main';
 import NestedGrid from './components/nested-grid/NestedGrid';
+import RootView from './components/root-view/RootView';
 
 export const GlobalStateContext = createContext({});
 
@@ -13,7 +14,7 @@ function App() {
   return (
     <GlobalStateContext.Provider value={{ mainService }}>
       <div className="App">
-      <NestedGrid/>
+      <RootView/>
     </div>
   
     </GlobalStateContext.Provider>

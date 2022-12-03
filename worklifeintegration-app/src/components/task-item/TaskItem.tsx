@@ -12,9 +12,10 @@ import Typography from '@mui/material/Typography';
 <>{props.task.name}</>
 </div> */}
 
-export function TaskItem(props: {task: Task}) {
+export function TaskItem(props: {task: Task, height:number}) {
   return (
-    <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+    <Box sx={{ width: '100%', height: '100%', maxWidth: 200, 
+    maxHeight:props.height, bgcolor: 'cyan' }}>
       <Box sx={{ my: 3, mx: 2 }}>
         <Grid container alignItems="center">
           <Grid item xs>
