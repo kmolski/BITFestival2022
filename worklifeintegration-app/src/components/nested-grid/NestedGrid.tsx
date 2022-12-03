@@ -52,11 +52,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 console.log(task.end);
                 console.log('task.end.diff(task.start, "days")');
                 console.log(task.end.diff(task.start));
-                return (<TaskItem task={{
-                    name: task.name,
-                    start: task.start,
-                    end: task.end
-                }} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
+                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
             })}
         </Grid> 
     );
