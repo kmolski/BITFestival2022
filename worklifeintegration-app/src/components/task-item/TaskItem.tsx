@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { Card, Modal } from '@mui/material';
-import RemoveTask from '../remove-task/RemoveTask';
 import { sendType, stateType } from '../../machines/types';
 
 const style = {
