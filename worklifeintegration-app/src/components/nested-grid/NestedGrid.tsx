@@ -53,7 +53,7 @@ function Column(props:{columnName:string, taskList:Task[], state: stateType, sen
                 // console.log(task.end);
                 // console.log('task.end.diff(task.start, "days")');
                 // console.log(task.end.diff(task.start));
-                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}  state={props.state} send={props.send}/>)
+                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight} />)
             })}
         </Grid> 
     );
@@ -62,8 +62,8 @@ function Column(props:{columnName:string, taskList:Task[], state: stateType, sen
 export default function NestedGrid(props: {taskData:TaskCollection, state: stateType, send: sendType}) {
   return (
     <div className='Column'>
-    <Box sx={{ flexGrow: 1, height: '100%'}}>
-      <Grid sx={{ height: '100%'}} container spacing={1}>
+    <Box sx={{ flexGrow: 1, height: '100%', width: '100%'}}>
+      <Grid sx={{ height: '100%', width: '100%'}} container spacing={1}>
         <Column columnName="Monday" taskList={props.taskData.Monday} state={props.state} send={props.send}/>
         <Column columnName="Tuesday" taskList={props.taskData.Tuesday} state={props.state} send={props.send}/>
         <Column columnName="Wednesday" taskList={props.taskData.Wednesday} state={props.state} send={props.send}/>

@@ -27,7 +27,7 @@ const style = {
 };
 
 
-export default function RemoveTask(props: {task: Task, state: stateType, send: sendType}) {
+export default function RemoveTask(props: {task: Task, send: sendType}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
