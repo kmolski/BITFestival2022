@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +28,6 @@ public class TaskService {
         return taskRepository.findInTimeInterval(start, end);
     }
 
-    //zrobic jak uzytkownik bedzie chcial inna, na razie collection nie robie
     public Pair<LocalDateTime, LocalDateTime> searchForEmptyPeriods(LocalDateTime date, Duration duration, Task newTask) {
         Iterable<Task> tasks = getTasksFromToday(date);
         ArrayList<Task> tasksToSort = new ArrayList<>();
@@ -143,7 +143,7 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
         var endTime = startTime.plus(duration);
         if (endTime.toLocalTime().isAfter(movedTask.getPlacementLimit().getEndTime())) {
-            throw new BadRequestException("Cannot finish moved task today: " + movedTask);
+            throw new BadRequestException("Cannot finish moved task today.", List.of(movedTask));
         }
         return movedTask.setStartTime(startTime).setEndTime(endTime);
     }

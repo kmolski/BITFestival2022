@@ -45,9 +45,9 @@ public class TaskController {
         if (taskService.canTaskBePlaced(overlappingTasks)) {
             return taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(task));
         } else {
-            var message = "Cannot move high priority tasks: " + overlappingTasks.stream()
-                    .filter(not(taskService::isTaskAdjustable)).toList();
-            throw new BadRequestException(message);
+            var message = "Cannot move high priority tasks.";
+            var entities = overlappingTasks.stream().filter(not(taskService::isTaskAdjustable)).toList();
+            throw new BadRequestException(message, entities);
         }
     }
 
