@@ -1,7 +1,7 @@
 import { createMachine, assign, spawn } from 'xstate';
 import { emptyTaskCollection, mapRawToTaskCollection, rawDataToTaskList, Task, TaskCollection } from '../utils/task';
 import moment from 'moment'
-import { fetchWeek, suggestTask } from '../utils/endpoint';
+import { commitTask, deleteTask, fetchWeek, suggestTask } from '../utils/endpoint';
 import { log, pure } from 'xstate/lib/actions';
 
 export interface MainContext {
@@ -67,8 +67,9 @@ export const mainMachine = createMachine<MainContext>({
       // wait for user to make an action
       on: {
         CHANGE_WEEK: {target: 'fetch'},
-        DELETE: {target: 'fetch'},
+        DELETE: {target: 'delete'},
         ADD: {target: 'suggest'},
+        COMMIT: {target: 'commit'},
       },
     },
     popup: {
@@ -96,6 +97,39 @@ export const mainMachine = createMachine<MainContext>({
           actions: log("Data suggestion error")
         }
       },
+    },
+    commit: {
+      invoke: {
+        id: 'commitTask',
+        src: (context, event) => {
+          console.log("Commit task");
+          return commitTask({blob: context.suggestion_data_dont_use})
+        },
+        onDone: {
+          target: 'wait',
+          actions: assign({ suggestion_data: (_context, event) => {
+            console.log("Suggestion data commited");
+            return [] },
+            suggestion_data_dont_use: (_context, event) => undefined
+          }
+          )
+        },
+        onError: {
+          target: 'wait', // todo: handle errors
+          actions: log("Data suggestion error")
+        }
+      },
+    },
+    delete: {
+      invoke: {
+        id: 'deleteTask',
+        src: (context, event) => {
+          console.log("Delete task");
+          return deleteTask({id: event.id})
+        },
+        onDone: {target: 'fetch'},
+        onError: {target: 'fetch'},
+      },
     }
   },
 },
@@ -107,7 +141,13 @@ export const mainMachine = createMachine<MainContext>({
     },
   },
   actions: {
-    clearState: (context, event) => initialContext,
+    clearState: (context, event) => {
+      console.log("Set context to", initialContext)
+      return {  task_data: null,
+        week_start: moment().startOf('week'),
+        suggestion_data: [],
+        suggestion_data_dont_use: {},}
+    },
   }
 }
 );

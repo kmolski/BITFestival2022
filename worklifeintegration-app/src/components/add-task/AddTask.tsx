@@ -30,7 +30,10 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
   const handleClose = () => setOpen(false);
   const sendTaskMessage = () => {
     props.send('ADD', {placeholder: "ABCD"})
-  }
+  };
+  const sendCommitMessage = () => {
+    props.send('COMMIT')
+  };
 
   const [value, setValue] = React.useState<Moment | null>(
     moment('2014-08-18T21:11:54'),
@@ -73,6 +76,7 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
                 />
             </LocalizationProvider>
             <button onClick={sendTaskMessage}>Add the task</button>
+            <button onClick={sendCommitMessage}>Commit the task</button>
             {props.state.context.suggestion_data.map(item => item.name)}
         </Box>
       </Modal>
