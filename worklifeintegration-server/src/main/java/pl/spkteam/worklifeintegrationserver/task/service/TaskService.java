@@ -128,7 +128,7 @@ public class TaskService {
             tasksForTheDay.add(movedTask);
         }
         newTasks.add(newTask);
-
+        //tutaj sprawdzic czy dobre zwracane
         return new TaskChangelistDto(newTasks, splitTasks);
     }
 
