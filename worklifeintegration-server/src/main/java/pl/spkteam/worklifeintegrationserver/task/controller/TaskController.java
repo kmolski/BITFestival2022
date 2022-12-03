@@ -40,9 +40,10 @@ public class TaskController {
         Collection<Task> oldTasks = getTasks(task.getStartTime(), task.getEndTime());
         Collection<Task> changedTasksToConfirm = new ArrayList<>();
         if (!oldTasks.isEmpty()) {
-            //if (!oldTasks.stream().filter(this::checkIfAdjustableTask).allMatch(true)) {
-           //     return null;
-           // }
+            for (Task cTask : oldTasks) {
+                if (checkIfAdjustableTask(cTask))
+                    return null;
+            }
             changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, startTime, endTime, oldTasks, changedTasksToConfirm));
         }
         //po prostu nie ma zadnych wydarzen w przedziale
