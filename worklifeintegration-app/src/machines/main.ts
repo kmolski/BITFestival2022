@@ -1,12 +1,11 @@
 import { createMachine, assign } from 'xstate';
-import { MomentDate } from '../utils/moment';
-import { TaskCollection } from '../utils/task';
-var moment = require('moment');
+import { emptyTaskCollection, TaskCollection } from '../utils/task';
+import moment from 'moment'
 
 interface MainContext {
   // todo: set context that makes sense
   task_data: TaskCollection | null ;
-  week_start: MomentDate;
+  week_start: moment.Moment;
 }
 
 export const mainMachine = createMachine<MainContext>({
@@ -36,6 +35,7 @@ export const mainMachine = createMachine<MainContext>({
       always: [
         {target: 'wait'} // use "cond" to execute transition give a condition
       ],
+      exit: ['fetchData'] // action taken when state is exited
     },
     wait: {
       // wait for user to make an action
@@ -53,16 +53,13 @@ export const mainMachine = createMachine<MainContext>({
       },
     }
   },
+},
+{
+  actions: {
+    // action implementations
+    fetchData: assign({
+      task_data: (context, event) => emptyTaskCollection
+    }),
+  }
 }
 );
-
-      // todo: use assign actions
-      // on: {
-      //   STEP: {
-      //     target: "target",
-      //     actions: assign({
-      //       value: (context, event) => context.value + 1
-      //     })
-      //   },
-      //   STOP: 'idle'
-      // }
