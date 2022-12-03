@@ -133,16 +133,16 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
                 onChange={handleChangeTimeStart}
                 renderInput={(params) => <TextField {...params} />}
                 /></Box> 
-                <TimePicker
+                <Box m={0} pt={1}><TimePicker
                 className='Paded'
                 label="End time"
                 value={timeEnd}
                 onChange={handleChangeTimeEnd}
                 renderInput={(params) => <TextField {...params} />}
-                />
+                /></Box> 
             </LocalizationProvider>
-            <Button variant="contained" onClick={sendTaskMessage}>Find time</Button>
-            <div onClick={sendCommitMessage}><TaskContainer tasks={props.state.context.suggestion_data}/></div>
+            <Box m={1} pt={0}><Button variant="contained" onClick={sendTaskMessage}>Find time</Button></Box> 
+            <Box m={1} pt={1}><div onClick={sendCommitMessage}><TaskContainer tasks={props.state.context.suggestion_data}/></div></Box> 
         </Box>
       </Modal>
     </div>
