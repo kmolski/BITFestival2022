@@ -42,7 +42,7 @@ public class TaskController {
                 if (checkIfAdjustableTask(cTask))
                     return null;
             }
-            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, oldTasks, changedTasksToConfirm));
+            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, oldTasks));
         }
         //po prostu nie ma zadnych wydarzen w przedziale
         changedTasksToConfirm.add(task);

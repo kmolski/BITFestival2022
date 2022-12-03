@@ -52,6 +52,12 @@ class TaskServiceTest {
     private final LocalDateTime endWorkDateTimeLong = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 16, 15, 0);
 
+    private final LocalDateTime startDoctorAppointment = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 11, 00, 0);
+
+    private final LocalDateTime endDoctorAppointment = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 13, 00, 0);
+
     private final Duration oneHour = Duration.ofMinutes(60);
 
     private final Task testTask = createExampleTask();
@@ -111,10 +117,35 @@ class TaskServiceTest {
     @Test
     void changeAlreadyExistingTasksAllDayCaseTest() {
 
-        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleLongerThanWorkDayTask(), Collections.singleton(testTask), new ArrayList<>());
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleLongerThanWorkDayTask(), Collections.singleton(testTask));
 
         Assertions.assertNull(actualTasks);
     }
+
+    @Test
+    void changeAlreadyExistingTasksAfterWorkCaseTest() {
+        Collection<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(createExampleTask());
+        expectedTasks.add(createExampleTask2());
+
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleTask2(), Collections.singleton(testTask));
+
+        Assertions.assertEquals(expectedTasks, actualTasks);
+    }
+
+    @Test
+    void changeAlreadyExistingTasksDuringWorkCaseTest() {
+      /*  Collection<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(createExampleTask());
+        expectedTasks.add(createExampleDuringWorkDayTask());
+        //tutaj 2 changed
+        Mockito.when(taskRepository.findAll()).thenReturn(Collections.singleton(createExampleTask()));
+
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleDuringWorkDayTask(), Collections.singleton(testTask));
+
+        Assertions.assertEquals(expectedTasks, actualTasks);*/
+    }
+
 
     private Task createExampleTask() {
         return Task.builder()
@@ -152,6 +183,16 @@ class TaskServiceTest {
                 .taskPriority(Priority.HIGH)
                 .category(Category.HEALTH_APPOINTMENT)
                 .endTime(endWorkDateTimeLong)
+                .place(createExamplePlace2())
+                .build();
+    }
+
+    private Task createExampleDuringWorkDayTask() {
+        return Task.builder()
+                .startTime(startDoctorAppointment)
+                .taskPriority(Priority.HIGH)
+                .category(Category.HEALTH_APPOINTMENT)
+                .endTime(endDoctorAppointment)
                 .place(createExamplePlace2())
                 .build();
     }
