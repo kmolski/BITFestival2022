@@ -52,3 +52,74 @@ databaseChangeLog:
             referencedTableName: place
             referencedColumnNames: id
             onDelete: cascade
+  - changeSet:
+      id: 2_add_placement_limit
+      author: kmolski
+      changes:
+        - createTable:
+            tableName: placement_limit
+            columns:
+              - column:
+                  name: id
+                  type: int generated always as identity
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                  defaultValue: ''
+              - column:
+                  name: start_time
+                  type: time
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: time
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: placement_limit_id
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: FK_task_placement_limit_id
+            baseTableName: task
+            baseColumnNames: placement_limit_id
+            referencedTableName: placement_limit
+            referencedColumnNames: id
+            onDelete: cascade
+  - changeSet:
+      id: 3_add_category_and_priority
+      author: kmolski
+      changes:
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: task_priority
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: int
+  - changeSet:
+      id: 4_add_task_title
+      author: kmolski
+      changes:
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  type: text
+                  constraints:
+                    nullable: false
+                  defaultValue: ''
