@@ -12,11 +12,13 @@ function RootView(props: {state: stateType, send: sendType}) {
     <div className="RootView">
         <Stack direction="row" height="100%" spacing={2}>
         {/* <Stack direction="row" spacing={2}> */}
-            <div className='Grid'><NestedGrid taskData={props.state.context.task_data as TaskCollection}/></div>
-            {/* <Stack height="100%" direction="column" spacing={2}> */}
-            <Stack height="100%" direction="column" spacing={2}>
+        <Stack height="100%" direction="column" spacing={2}>
                 <AddTask state={props.state} send={props.send}/>
             </Stack>
+            <div className='Grid'><NestedGrid 
+            taskData={props.state.context.task_data as TaskCollection} 
+            state={props.state} send={props.send}/></div>
+            {/* <Stack height="100%" direction="column" spacing={2}> */}
         </Stack>
     </div>
   );

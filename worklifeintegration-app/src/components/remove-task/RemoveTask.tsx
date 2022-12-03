@@ -3,13 +3,16 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { Card, FormLabel, TextField } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment, { Moment } from 'moment';
+import { Task } from '../../utils/task';
+import { margin } from '@mui/system';
+import { sendType, stateType } from '../../machines/types';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -23,22 +26,15 @@ const style = {
   p: 4,
 };
 
-export default function RemoveTask() {
+
+export default function RemoveTask(props: {task: Task, state: stateType, send: sendType}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [value, setValue] = React.useState<Moment | null>(
-    moment('2014-08-18T21:11:54'),
-  );
-
-  const handleChange = (newValue: Moment | null) => {
-    setValue(newValue);
-  };
-
   return (
     <div>
-      <Button onClick={handleOpen}>Add task</Button>
+      <Button onClick={handleOpen} size="small">Remove</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -46,28 +42,16 @@ export default function RemoveTask() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <TextField id="outlined-basic" label="Name" variant="outlined" />
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DesktopDatePicker
-                label="Date"
-                inputFormat="MM/DD/YYYY"
-                value={value}
-                onChange={handleChange}
-                renderInput={(params) => <TextField {...params} />}
-                />
-                <TimePicker
-                label="Start time"
-                value={value}
-                onChange={handleChange}
-                renderInput={(params) => <TextField {...params} />}
-                />
-                <TimePicker
-                label="End time"
-                value={value}
-                onChange={handleChange}
-                renderInput={(params) => <TextField {...params} />}
-                />
-            </LocalizationProvider>
+            <Box>
+                <tr>Name: {props.task.name}</tr>
+                <tr>Start time: {props.task.start.format('MMMM Do YYYY, h:mm:ss a')}</tr>
+                <tr>End time: {props.task.end.format('MMMM Do YYYY, h:mm:ss a')}</tr>
+                <tr>Place: {props.task.placeId}</tr>
+                <tr>Placement limit: {props.task.placementLimitId}</tr>
+                <tr>Priority: {props.task.taskPriority}</tr>
+            </Box>
+          <Button variant="contained" color="error" 
+          onClick={()=>{props.send('DELETE', {id: props.task.id});setOpen(false)}}>Remove</Button>
         </Box>
       </Modal>
     </div>

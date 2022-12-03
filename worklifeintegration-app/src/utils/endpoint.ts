@@ -42,7 +42,7 @@ export function commitTask(props: {blob: any}): Promise<any> {
 }
 
 export function deleteTask(props: {id: number}): Promise<any> {
-    return fetch(LINK_TASKS + '/tasks/' + props.id.toString(),
+    return fetch(LINK_TASKS + '/' + props.id.toString(),
         {
             method: 'DELETE',
             headers: { 'Accept': '*/*', 'Content-Type': 'application/json'},

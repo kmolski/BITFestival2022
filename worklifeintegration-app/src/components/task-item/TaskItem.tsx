@@ -7,7 +7,9 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { Card } from '@mui/material';
+import { Card, Modal } from '@mui/material';
+import RemoveTask from '../remove-task/RemoveTask';
+import { sendType, stateType } from '../../machines/types';
 
 {/* <div className="TaskItem">
 <>{props.task.name}</>
@@ -16,8 +18,11 @@ function setState(){
 
 }
 
-export function TaskItem(props: {task: Task, height:number}) {
+export function TaskItem(props: {task: Task, height:number, state: stateType, send: sendType}) {
   const [show, setShow] = useState(false);
+  const hour_start = props.task.start.format("H:mm")
+  const hour_end = props.task.end.format("H:mm")
+
   return (
     <Card sx={{ width: '100%', height: '100%', maxWidth: 200, 
     maxHeight:props.height, bgcolor: 'cyan' }} onClick={() => setState()}>
@@ -29,8 +34,9 @@ export function TaskItem(props: {task: Task, height:number}) {
           </Grid>
         </Grid>
         <Typography color="text.secondary" variant="body2">
-          Godzina taska
+          {hour_start + " - " + hour_end}
         </Typography>
+        <RemoveTask task={props.task} state={props.state} send={props.send}/>
     </Card>
   );
 }

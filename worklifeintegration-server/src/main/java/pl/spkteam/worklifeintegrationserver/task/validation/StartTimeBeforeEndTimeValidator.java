@@ -8,6 +8,7 @@ public class StartTimeBeforeEndTimeValidator implements ConstraintValidator<Star
 
     @Override
     public boolean isValid(TimeIntervalObject value, ConstraintValidatorContext context) {
-        return value.getStartTime().isBefore(value.getEndTime());
+        return value.getStartTime() != null && value.getEndTime() != null
+            && value.getStartTime().isBefore(value.getEndTime());
     }
 }
