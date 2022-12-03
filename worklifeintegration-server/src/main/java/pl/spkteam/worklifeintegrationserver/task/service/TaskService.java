@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.spkteam.worklifeintegrationserver.restapi.exception.BadRequestException;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
@@ -140,7 +141,7 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
         var endTime = startTime.plus(duration);
         if (endTime.toLocalTime().isAfter(movedTask.getPlacementLimit().getEndTime())) {
-            throw new IllegalStateException("Cannot finish moved task today");
+            throw new BadRequestException("Cannot finish moved task today");
         }
         return movedTask.setStartTime(startTime).setEndTime(endTime);
     }
