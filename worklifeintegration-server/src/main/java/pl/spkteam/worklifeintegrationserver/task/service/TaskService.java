@@ -36,7 +36,7 @@ public class TaskService {
             LocalDateTime x2 = task2.getStartTime();
 
             return x1.compareTo(x2);
-        }); //przetestowac czy sortuje
+        });
 
         LocalDateTime startTime = tasksToSort.get(tasksToSort.size() - 1).getEndTime();
         LocalDateTime endTime = startTime.plus(duration);

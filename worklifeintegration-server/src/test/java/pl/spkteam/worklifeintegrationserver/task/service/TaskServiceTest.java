@@ -17,6 +17,8 @@ import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +34,17 @@ class TaskServiceTest {
     private final LocalDateTime endWorkDateTime = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 16, 0, 0);
 
+    private final LocalDateTime startWorkDateTime2 = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 16, 30, 0);
+
+    private final LocalDateTime endWorkDateTime2 = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 17, 15, 0);
+
+    private final LocalDateTime startWorkDateTimeFromAnotherDay = LocalDateTime.of(2022,
+            Month.JULY, 3, 9, 30, 0);
+
+    private final LocalDateTime endWorkDateTimeFromAnotherDay = LocalDateTime.of(2022,
+            Month.JULY, 3, 16, 15, 0);
 
     private final Duration oneHour = Duration.ofMinutes(60);
 
@@ -57,12 +70,36 @@ class TaskServiceTest {
         Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, testTask);
 
         Assertions.assertEquals(expectedEmptyPeriod, actualEmptyPeriod);
+    }
 
+    @Test
+    void searchForEmptyPeriodsWithMoreExamplesTest() {
+        Mockito.when(taskRepository.findAll()).thenReturn(Collections.singleton(createExampleTask2()));
+        LocalDateTime expectedStartTime = LocalDateTime.of(2022,
+                Month.DECEMBER, 3, 17, 15, 0);
+        LocalDateTime expectedEndTime = LocalDateTime.of(2022,
+                Month.DECEMBER, 3, 18, 15, 0);
+        Pair<LocalDateTime, LocalDateTime> expectedEmptyPeriod = Pair.of(expectedStartTime, expectedEndTime);
+
+        Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, testTask);
+
+        Assertions.assertEquals(expectedEmptyPeriod, actualEmptyPeriod);
     }
 
     @Test
     void getTasksFromDayTest() {
+        Collection<Task> allTasks = new ArrayList<>();
+        allTasks.add(createExampleTask());
+        allTasks.add(createExampleTask2());
+        allTasks.add(createExampleTaskFromAnotherDay());
+        Mockito.when(taskRepository.findAll()).thenReturn(allTasks);
+        Collection<Task> expectedTasks = new ArrayList<>();
+        allTasks.add(createExampleTask());
+        allTasks.add(createExampleTask2());
 
+        Collection<Task> actualTasks = taskService.getTasksFromDay(startWorkDateTime);
+
+        Assertions.assertEquals(expectedTasks, actualTasks);
     }
 
     @Test
@@ -81,6 +118,26 @@ class TaskServiceTest {
                 .taskPriority(Priority.LOW)
                 .category(Category.OFFICE_WORK)
                 .endTime(endWorkDateTime)
+                .place(place)
+                .build();
+    }
+
+    private Task createExampleTask2() {
+        return Task.builder()
+                .startTime(startWorkDateTime2)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(endWorkDateTime2)
+                .place(place)
+                .build();
+    }
+
+    private Task createExampleTaskFromAnotherDay() {
+        return Task.builder()
+                .startTime(startWorkDateTimeFromAnotherDay)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(endWorkDateTimeFromAnotherDay)
                 .place(place)
                 .build();
     }
