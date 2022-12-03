@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalObject;
 import pl.spkteam.worklifeintegrationserver.task.model.Category;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @StartTimeBeforeEndTime
-public class TaskDto {
+public class TaskDto implements TimeIntervalObject {
 
     private Long id;
 

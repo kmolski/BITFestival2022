@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalEntity;
+import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalObject;
 import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @StartTimeBeforeEndTime
-public class Task implements TimeIntervalEntity, Cloneable {
+public class Task implements TimeIntervalObject, Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
