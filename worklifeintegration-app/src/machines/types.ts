@@ -6,4 +6,4 @@ export type stateType = State<MainContext, AnyEventObject, any, {
     context: MainContext;
 }, ResolveTypegenMeta<TypegenDisabled, AnyEventObject, BaseActionObject, ServiceMap>>
 
-export type stateSend = (event: SCXML.Event<AnyEventObject> | SingleOrArray<any>, payload?: EventData | undefined) => State<any>
+export type sendType = (event: SCXML.Event<AnyEventObject> | SingleOrArray<any>, payload?: EventData | undefined) => State<any>

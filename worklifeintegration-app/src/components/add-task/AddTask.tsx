@@ -10,6 +10,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment, { Moment } from 'moment';
+import { sendType, stateType } from '../../machines/types';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -23,10 +24,16 @@ const style = {
   p: 4,
 };
 
-export default function AddTask() {
+export default function AddTask(props: {state: stateType, send: sendType}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const sendTaskMessage = () => {
+    props.send('ADD', {placeholder: "ABCD"})
+  };
+  const sendCommitMessage = () => {
+    props.send('COMMIT')
+  };
 
   const [value, setValue] = React.useState<Moment | null>(
     moment('2014-08-18T21:11:54'),
@@ -68,6 +75,9 @@ export default function AddTask() {
                 renderInput={(params) => <TextField {...params} />}
                 />
             </LocalizationProvider>
+            <button onClick={sendTaskMessage}>Add the task</button>
+            <button onClick={sendCommitMessage}>Commit the task</button>
+            {props.state.context.suggestion_data.map(item => item.name)}
         </Box>
       </Modal>
     </div>
