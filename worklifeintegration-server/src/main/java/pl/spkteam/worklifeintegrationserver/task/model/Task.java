@@ -2,8 +2,10 @@ package pl.spkteam.worklifeintegrationserver.task.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalEntity;
 import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
 
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @StartTimeBeforeEndTime
 public class Task implements TimeIntervalEntity {
 
@@ -32,12 +36,12 @@ public class Task implements TimeIntervalEntity {
 
     @NotNull
     @ManyToOne
-    private PlacementLimit placementLimits;
+    private PlacementLimit placementLimit;
 
+    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Priority taskPriority;
 
     @Enumerated(EnumType.ORDINAL)
     private Category category;
-
 }

@@ -95,4 +95,18 @@ databaseChangeLog:
             referencedTableName: placement_limit
             referencedColumnNames: id
             onDelete: cascade
-
+  - changeSet:
+      id: 3_add_category_and_priority
+      author: kmolski
+      changes:
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: task_priority
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: int
