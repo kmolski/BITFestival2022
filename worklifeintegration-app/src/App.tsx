@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import { useInterpret } from '@xstate/react';
 import { mainMachine } from './machines/main';
-import Column from './components/column/Column';
 import NestedGrid from './components/nested-grid/NestedGrid';
 
 export const GlobalStateContext = createContext({});
