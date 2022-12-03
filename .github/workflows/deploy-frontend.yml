@@ -25,7 +25,7 @@ jobs:
         
     - name: Build React web app
       working-directory: ./worklifeintegration-app
-      run: npm run build
+      run: CI='' npm run build
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
