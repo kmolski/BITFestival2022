@@ -32,7 +32,7 @@ jobs:
       run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
 
     - name: Deploy to AWS Elastic Beanstalk
-      urss: einaregilsson/beanstalk-deploy@v21
+      uses: einaregilsson/beanstalk-deploy@v21
       working-directory: ./worklifeintegration-server
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
