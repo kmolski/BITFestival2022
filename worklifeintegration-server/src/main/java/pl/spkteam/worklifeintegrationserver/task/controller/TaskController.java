@@ -3,6 +3,7 @@ package pl.spkteam.worklifeintegrationserver.task.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.spkteam.worklifeintegrationserver.restapi.exception.BadRequestException;
 import pl.spkteam.worklifeintegrationserver.task.dto.EntityListDto;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskDto;
@@ -11,6 +12,8 @@ import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
 import java.time.LocalDateTime;
+
+import static java.util.function.Predicate.not;
 
 
 @RestController
@@ -40,9 +43,11 @@ public class TaskController {
         var task = taskMapper.mapTaskDtoToEntity(taskDto);
         var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         if (taskService.canTaskBePlaced(overlappingTasks)) {
-            return taskService.placeNewTask(task);
+            return taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(task));
         } else {
-            return null;
+            var message = "Cannot move high priority tasks: " + overlappingTasks.stream()
+                    .filter(not(taskService::isTaskAdjustable)).toList();
+            throw new BadRequestException(message);
         }
     }
 
@@ -52,7 +57,7 @@ public class TaskController {
     }
 
     @PostMapping("/commit")
-    public void commitTaskChangelist(@Valid TaskChangelistDto changelist) {
-        taskService.saveTaskChangelist(changelist);
+    public void commitTaskChangelist(@RequestBody @Valid TaskChangelistDto changelist) {
+        taskService.saveTaskChangelist(taskMapper.mapTaskChangelistDtoToModel(changelist));
     }
 }
