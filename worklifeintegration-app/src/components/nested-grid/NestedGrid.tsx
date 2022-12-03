@@ -18,44 +18,55 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Column(props:{columnName:string, taskList:Task[]}) {
-    const oneDayEquivalentHeight = 500;
+    const containerRef = React.useRef<HTMLDivElement | null>(null)
+    const [oneDayEquivalentHeight, setOneDayEquivalentHeight] = useState(500)
+
     const oneHourEquivalentHeight = oneDayEquivalentHeight / 24;
     const [tasks, setTaskList] = useState(props.taskList);
+
+    React.useEffect(() => {
+        const handleResize = () => {
+            setOneDayEquivalentHeight( containerRef.current?.clientHeight || 500)
+        }
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    } ,[])
+
     return (
-        <React.Fragment>
-        <Grid item xs={1.5} sx={{bgcolor: 'blue' }}>
-        <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
-            <Box sx={{ my: 3, mx: 2 }}>
-                <Grid container alignItems="center">
-                    <Grid item xs>
-                        <Typography gutterBottom variant="h6" component="div">
-                        {props.columnName}
-                        </Typography>
+        <Grid height="100%" ref={containerRef} item xs={1.5} sx={{bgcolor: 'blue' }}>
+            <Box sx={{ height: "100%", width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+                <Box sx={{ my: 3, mx: 2 }}>
+                    <Grid container alignItems="center">
+                        <Grid item xs>
+                            <Typography gutterBottom variant="h6" component="div">
+                            {props.columnName}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Box>
             </Box>
-        </Box>
-        {tasks.map((task) => {
-            console.log(task.start);
-            console.log(task.end);
-            console.log('task.end.diff(task.start, "days")');
-            console.log(task.end.diff(task.start));
-            return (<TaskItem task={{
-                name: task.name,
-                start: task.start,
-                end: task.end
-            }} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
-        })}
+            {tasks.map((task) => {
+                console.log(task.start);
+                console.log(task.end);
+                console.log('task.end.diff(task.start, "days")');
+                console.log(task.end.diff(task.start));
+                return (<TaskItem task={{
+                    name: task.name,
+                    start: task.start,
+                    end: task.end
+                }} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
+            })}
         </Grid> 
-        </React.Fragment>
     );
 }
 
 export default function NestedGrid(props: {taskData:TaskCollection}) {
   return (
     <div className='Column'>
-    <Box sx={{ flexGrow: 1}}>
-      <Grid container spacing={1}>
+    <Box sx={{ flexGrow: 1, height: '100%'}}>
+      <Grid sx={{ height: '100%'}} container spacing={1}>
         <Column columnName="Monday" taskList={props.taskData.Monday}/>
         <Column columnName="Tuesday" taskList={props.taskData.Tuesday}/>
         <Column columnName="Wednesday" taskList={props.taskData.Wednesday}/>
