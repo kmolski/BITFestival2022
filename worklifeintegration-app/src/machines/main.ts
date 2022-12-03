@@ -81,7 +81,9 @@ export const mainMachine = createMachine<MainContext>({
         id: 'suggestTask',
         src: (context, event) => {
           console.log("Invoke suggest");
-          return suggestTask({title: event.placeholder})
+          return suggestTask({title: event.title,
+                              start: event.start, 
+                              end: event.end})
         },
         onDone: {
           target: 'wait',

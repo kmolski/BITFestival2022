@@ -28,19 +28,39 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const sendTaskMessage = () => {
-    props.send('ADD', {placeholder: "ABCD"})
-  };
+
   const sendCommitMessage = () => {
     props.send('COMMIT')
   };
 
-  const [value, setValue] = React.useState<Moment | null>(
-    moment('2014-08-18T21:11:54'),
+  const [title, setTitle] = React.useState("");
+  
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+  const [timeStart, setTimeStart] = React.useState<Moment | null>(
+    moment(),
+  );
+  const [timeEnd, setTimeEnd] = React.useState<Moment | null>(
+    moment(),
   );
 
-  const handleChange = (newValue: Moment | null) => {
-    setValue(newValue);
+  const handleDateChange = (newValue: Moment | null) => {
+    setTimeStart(newValue);
+    setTimeEnd(newValue);
+  };
+  const handleChangeTimeStart = (newValue: Moment | null) => {
+    console.log(newValue);
+    setTimeStart(newValue);
+  };
+  const handleChangeTimeEnd = (newValue: Moment | null) => {
+    console.log(newValue);
+    setTimeEnd(newValue);
+  };
+
+
+  const sendTaskMessage = () => {
+    props.send('ADD', {title: title, start: timeStart, end: timeEnd})
   };
 
   return (
@@ -53,25 +73,25 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <TextField id="outlined-basic" label="Name" variant="outlined" />
+          <TextField id="outlined-basic" label="Name" variant="outlined" onChange={handleTitleChange}/>
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DesktopDatePicker
                 label="Date"
                 inputFormat="MM/DD/YYYY"
-                value={value}
-                onChange={handleChange}
+                value={timeStart}
+                onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
                 />
                 <TimePicker
                 label="Start time"
-                value={value}
-                onChange={handleChange}
+                value={timeStart}
+                onChange={handleChangeTimeStart}
                 renderInput={(params) => <TextField {...params} />}
                 />
                 <TimePicker
                 label="End time"
-                value={value}
-                onChange={handleChange}
+                value={timeEnd}
+                onChange={handleChangeTimeEnd}
                 renderInput={(params) => <TextField {...params} />}
                 />
             </LocalizationProvider>
