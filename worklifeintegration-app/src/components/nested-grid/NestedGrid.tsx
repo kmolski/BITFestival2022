@@ -22,8 +22,8 @@ function Column(props:{columnName:string, taskList:Task[], state: stateType, sen
     const containerRef = React.useRef<HTMLDivElement | null>(null)
     const [oneDayEquivalentHeight, setOneDayEquivalentHeight] = useState(500)
 
-    const oneHourEquivalentHeight = oneDayEquivalentHeight / 24;
-    const [tasks, setTaskList] = useState(props.taskList);
+    const oneHourEquivalentHeight = oneDayEquivalentHeight / 18;
+    const tasks = props.taskList;
 
     React.useEffect(() => {
         const handleResize = () => {

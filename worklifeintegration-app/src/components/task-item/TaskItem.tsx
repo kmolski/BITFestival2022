@@ -11,21 +11,30 @@ import { Card, Modal } from '@mui/material';
 import RemoveTask from '../remove-task/RemoveTask';
 import { sendType, stateType } from '../../machines/types';
 
-{/* <div className="TaskItem">
-<>{props.task.name}</>
-</div> */}
-function setState(){
-
-}
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 export function TaskItem(props: {task: Task, height:number, state: stateType, send: sendType}) {
   const [show, setShow] = useState(false);
   const hour_start = props.task.start.format("H:mm")
   const hour_end = props.task.end.format("H:mm")
 
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <Card sx={{ width: '100%', height: '100%', maxWidth: 200, 
-    maxHeight:props.height, bgcolor: 'cyan' }} onClick={() => setState()}>
+    maxHeight:props.height, bgcolor: 'cyan' }} onClick={handleOpen}>
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h6" component="div">
@@ -36,7 +45,26 @@ export function TaskItem(props: {task: Task, height:number, state: stateType, se
         <Typography color="text.secondary" variant="body2">
           {hour_start + " - " + hour_end}
         </Typography>
-        <RemoveTask task={props.task} state={props.state} send={props.send}/>
+        <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+            <Box>
+                <tr>Name: {props.task.name}</tr>
+                <tr>Start time: {props.task.start.format('MMMM Do YYYY, h:mm:ss a')}</tr>
+                <tr>End time: {props.task.end.format('MMMM Do YYYY, h:mm:ss a')}</tr>
+                <tr>Place: {props.task.placeId}</tr>
+                <tr>Placement limit: {props.task.placementLimitId}</tr>
+                <tr>Priority: {props.task.taskPriority}</tr>
+            </Box>
+          <Button variant="contained" color="error" 
+          onClick={()=>{props.send('DELETE', {id: props.task.id});setOpen(false)}}>Remove</Button>
+        </Box>
+      </Modal>
+
     </Card>
   );
 }
