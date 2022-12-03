@@ -11,12 +11,15 @@ import Typography from '@mui/material/Typography';
 {/* <div className="TaskItem">
 <>{props.task.name}</>
 </div> */}
+function setState(){
+
+}
 
 export function TaskItem(props: {task: Task, height:number}) {
+  const [show, setShow] = useState(false);
   return (
     <Box sx={{ width: '100%', height: '100%', maxWidth: 200, 
-    maxHeight:props.height, bgcolor: 'cyan' }}>
-      <Box sx={{ my: 3, mx: 2 }}>
+    maxHeight:props.height, bgcolor: 'cyan' }} onClick={() => setState()}>
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h6" component="div">
@@ -28,6 +31,5 @@ export function TaskItem(props: {task: Task, height:number}) {
           Godzina taska
         </Typography>
       </Box>
-    </Box>
   );
 }
