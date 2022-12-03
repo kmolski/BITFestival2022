@@ -110,3 +110,16 @@ databaseChangeLog:
               - column:
                   name: category
                   type: int
+  - changeSet:
+      id: 4_add_task_title
+      author: kmolski
+      changes:
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: title
+                  type: text
+                  constraints:
+                    nullable: false
+                  defaultValue: ''
