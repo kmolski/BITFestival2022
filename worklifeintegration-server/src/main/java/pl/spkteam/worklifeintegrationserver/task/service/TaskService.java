@@ -5,15 +5,17 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.spkteam.worklifeintegrationserver.restapi.exception.BadRequestException;
+import pl.spkteam.worklifeintegrationserver.task.model.PlacementLimit;
+import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.model.TaskChangelist;
-import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +26,14 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
+    private final PlacementLimitService placementLimitService;
+
     public Collection<Task> getTasksInTimeInterval(LocalDateTime start, LocalDateTime end) {
         return taskRepository.findInTimeInterval(start, end);
     }
 
-    public Pair<LocalDateTime, LocalDateTime> searchForEmptyPeriods(LocalDateTime date, Duration duration, Task newTask) {
-        Iterable<Task> tasks = getTasksFromToday(date);
+    public Pair<LocalDateTime, LocalDateTime> searchForEmptyPeriods(LocalDateTime todayDate, Duration duration, Task newTask) {
+        Iterable<Task> tasks = getTasksFromToday(todayDate);
         ArrayList<Task> tasksToSort = new ArrayList<>();
         tasks.forEach(tasksToSort::add);
         tasksToSort.add(newTask);
@@ -155,6 +159,33 @@ public class TaskService {
         taskRepository.deleteAll(changelist.deletedTasks());
     }
 
+    public TaskChangelist createProposition(Long placementLimitId, Duration length, LocalDateTime date) {
+        Collection<Task> tasks = getTasksFromToday(date);
+        PlacementLimit placementLimit = placementLimitService.getPlacementLimitById(placementLimitId); //sprawdzic czy dziala
+        for (Task currentTask : tasks) {
+            Duration duration = Duration.between(currentTask.getStartTime(), currentTask.getEndTime());
+            if (isTaskAdjustable(currentTask) && duration.compareTo(length) > 0) {
+                if (placementLimit.getStartTime().isBefore(currentTask.getStartTime().toLocalTime()) && placementLimit.getEndTime().isAfter(currentTask.getStartTime().plus(length).toLocalTime())) {
+                    Task newTask = Task.builder()
+                            .startTime(currentTask.getStartTime())
+                            .endTime(currentTask.getStartTime().plus(length))
+                            .build();
+                    return placeNewTask(newTask);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Collection<TaskChangelist> getTaskFromAllDays(Long placementLimit, Duration length, Long days, LocalDateTime start) {
+        Collection<TaskChangelist> proposedTasks = new ArrayList<>(Collections.emptyList());
+        for (int i = 0; i < days; i++) {
+            LocalDateTime date = start.plusDays(i);
+            proposedTasks.add(createProposition(placementLimit, length, date));
+        }
+        return proposedTasks;
+    }
+
     public boolean canTaskBePlaced(Collection<Task> overlappingTasks) {
         return overlappingTasks.stream().allMatch(this::isTaskAdjustable);
     }
@@ -162,4 +193,6 @@ public class TaskService {
     public boolean isTaskAdjustable(Task task) {
         return !task.getTaskPriority().equals(Priority.HIGH);
     }
+
+
 }

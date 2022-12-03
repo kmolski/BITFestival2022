@@ -7,10 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
-import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
-import pl.spkteam.worklifeintegrationserver.task.mapper.TaskMapper;
 import pl.spkteam.worklifeintegrationserver.task.model.*;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
@@ -21,6 +18,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
@@ -37,8 +35,8 @@ class TaskServiceTest {
     private final LocalDateTime fourteenoclock = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 14, 0, 0);
 
-    private final LocalDateTime halfaftersixteen = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 16, 30, 0);
+    private final LocalDateTime halfafterfifteen = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 15, 30, 0);
 
     private final LocalDateTime fifteenafterseventeen = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 17, 15, 0);
@@ -82,9 +80,12 @@ class TaskServiceTest {
     private final LocalDateTime secondConstraint = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 20, 0, 0);
 
-    private final LocalTime startTimeLimit = LocalTime.of(5, 0, 0,0 );
+    private final LocalDateTime halfafterseven = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 7, 30, 0);
 
-    private final LocalTime endTimeLimit = LocalTime.of(22, 0, 0,0 );
+    private final LocalTime startTimeLimit = LocalTime.of(5, 0, 0, 0);
+
+    private final LocalTime endTimeLimit = LocalTime.of(22, 0, 0, 0);
 
     private final Duration oneHour = Duration.ofMinutes(60);
 
@@ -95,6 +96,9 @@ class TaskServiceTest {
 
     @Mock
     TaskRepository taskRepository;
+
+    @Mock
+    PlacementLimitService placementLimitService;
 
     @Test
     void searchForEmptyPeriodsTest() {
@@ -190,6 +194,7 @@ class TaskServiceTest {
         Assertions.assertEquals(List.of(createFragmentedTask6_13()), actualTasks.splitTasks());
         Assertions.assertEquals(List.of(createFragmentedTask15_16(), createExampleDuringWorkDayTask13_15()), actualTasks.newTasks());
     }
+
 
     private Task createExampleTask6_14() {
         return Task.builder()
@@ -311,6 +316,7 @@ class TaskServiceTest {
                 .placementLimit(createPlacementLimit())
                 .build();
     }
+
     private Task createFragmentedTask6_13() {
         return Task.builder()
                 .startTime(sixoclock)
@@ -321,6 +327,7 @@ class TaskServiceTest {
                 .placementLimit(createPlacementLimit())
                 .build();
     }
+
     private Task createFragmentedTask15_16() {
         return Task.builder()
                 .startTime(fifteenoclock)
@@ -364,5 +371,66 @@ class TaskServiceTest {
         newPlace.setName("Doctor");
         newPlace.setTransportTimeMinutes(30);
         return newPlace;
+    }
+
+    private Task createExampleTask6_730() {
+        return Task.builder()
+                .startTime(sixoclock)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(halfafterseven)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    private Task createExampleTask14_1530() {
+        return Task.builder()
+                .startTime(fourteenoclock)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(halfafterfifteen)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    private Task createExampleTask730_14() {
+        return Task.builder()
+                .startTime(halfafterseven)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(fourteenoclock)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    @Test
+    void createPropositionTest() {
+        Long id = 1L;
+        Mockito.when(placementLimitService.getPlacementLimitById(id)).thenReturn(createPlacementLimit());
+        Duration duration = Duration.between(LocalTime.NOON, LocalTime.of(13, 30)); //czyli 1,5h
+        List<Task> allTasks = new ArrayList<>();
+        allTasks.add(createExampleTask6_14());
+        Mockito.when(taskRepository.findAll()).thenReturn(allTasks);
+
+        TaskChangelist taskChangelist = taskService.createProposition(id, duration, beforeDateTime);
+
+        Assertions.assertEquals(Stream.of(createExampleTask730_14()).count(), taskChangelist.splitTasks().size());
+        Assertions.assertEquals(createExampleTask730_14().getStartTime(), taskChangelist.splitTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask730_14().getEndTime(), taskChangelist.splitTasks().iterator().next().getEndTime());
+
+        Assertions.assertEquals(Stream.of(createExampleTask14_1530(), createExampleTask6_730()).count(), taskChangelist.newTasks().size());
+        Assertions.assertEquals(createExampleTask14_1530().getStartTime(), taskChangelist.newTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask14_1530().getEndTime(), taskChangelist.newTasks().iterator().next().getEndTime());
+        Assertions.assertEquals(createExampleTask6_730().getStartTime(), taskChangelist.newTasks().stream().skip(1).iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask6_730().getEndTime(), taskChangelist.newTasks().stream().skip(1).iterator().next().getEndTime());
+
+    }
+
+    @Test
+    void getTaskFromAllDaysTest() {
+
     }
 }
