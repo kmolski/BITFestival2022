@@ -156,7 +156,7 @@ public class TaskService {
     }
 
     public boolean canTaskBePlaced(Collection<Task> overlappingTasks) {
-        return !overlappingTasks.isEmpty() && overlappingTasks.stream().allMatch(this::isTaskAdjustable);
+        return overlappingTasks.stream().allMatch(this::isTaskAdjustable);
     }
 
     private boolean isTaskAdjustable(Task task) {
