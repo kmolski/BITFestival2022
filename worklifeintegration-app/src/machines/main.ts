@@ -1,12 +1,11 @@
 import { createMachine, assign } from 'xstate';
-import { MomentDate } from '../utils/moment';
 import { emptyTaskCollection, TaskCollection } from '../utils/task';
-var moment = require('moment');
+import moment from 'moment'
 
 interface MainContext {
   // todo: set context that makes sense
   task_data: TaskCollection | null ;
-  week_start: MomentDate;
+  week_start: moment.Moment;
 }
 
 export const mainMachine = createMachine<MainContext>({
