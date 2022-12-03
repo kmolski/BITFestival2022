@@ -96,10 +96,9 @@ class TaskServiceTest {
     @Mock
     TaskRepository taskRepository;
 
-    //do zmiany
     @Test
     void searchForEmptyPeriodsTest() {
-        Mockito.when(taskRepository.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(taskRepository.findAll()).thenReturn(List.of());
         LocalDateTime expectedStartTime = LocalDateTime.of(2022,
                 Month.DECEMBER, 3, 14, 0, 0);
         LocalDateTime expectedEndTime = LocalDateTime.of(2022,
@@ -110,7 +109,7 @@ class TaskServiceTest {
 
         Assertions.assertEquals(expectedEmptyPeriod, actualEmptyPeriod);
     }
-//do zmiany
+
     @Test
     void searchForEmptyPeriodsWithMoreExamplesTest() {
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask16_1715()));
@@ -143,22 +142,18 @@ class TaskServiceTest {
 
     @Test
     void changeAlreadyExistingTasksAllDayCaseTest() {
-        taskService.placeNewTask(createExampleTask6_14());
-
         TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleLongerThanWorkDayTask());
 
-        Assertions.assertEquals(Collections.emptyList(), actualTasks.splitTasks());
-        Assertions.assertEquals(Collections.singletonList(createExampleLongerThanWorkDayTask()), actualTasks.newTasks());
+        Assertions.assertEquals(List.of(), actualTasks.splitTasks());
+        Assertions.assertEquals(List.of(createExampleLongerThanWorkDayTask()), actualTasks.newTasks());
     }
 
     @Test
     void changeAlreadyExistingTasksAfterWorkCaseTest() {
-        taskService.placeNewTask(createExampleTask6_14());
-
         TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleTask16_1715());
 
-        Assertions.assertEquals(Collections.emptyList(), actualTasks.splitTasks());
-        Assertions.assertEquals(Collections.singletonList(createExampleTask16_1715()), actualTasks.newTasks());
+        Assertions.assertEquals(List.of(), actualTasks.splitTasks());
+        Assertions.assertEquals(List.of(createExampleTask16_1715()), actualTasks.newTasks());
     }
 
     @Test
@@ -168,7 +163,6 @@ class TaskServiceTest {
         expectedTasks.add(createFragmentedTask13_14());
 
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-
         TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask11_13());
 
         Assertions.assertEquals(expectedTasks, actualTasks.splitTasks());
@@ -180,50 +174,22 @@ class TaskServiceTest {
         Collection<Task> expectedTasks = new ArrayList<>();
         expectedTasks.add(createFragmentedTask14_15());
         expectedTasks.add(createExampleDuringWorkDayTask5_7());
-        Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        taskService.placeNewTask(createExampleTask6_14());
 
+        Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
         TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask5_7());
 
-        Assertions.assertEquals(Collections.singletonList(createFragmentedTask7_14()), actualTasks.splitTasks());
+        Assertions.assertEquals(List.of(createFragmentedTask7_14()), actualTasks.splitTasks());
         Assertions.assertEquals(expectedTasks, actualTasks.newTasks());
     }
 
-//nie dziala
     @Test
     void changeAlreadyExistingTasksAfterWorkCaseOverlappingTest() {
-        Collection<Task> expectedTasks = new ArrayList<>();
-        expectedTasks.add(createExampleTask6_14());
-        expectedTasks.add(createFragmentedTask15_16());
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        taskService.placeNewTask(createExampleTask6_14());
-
         TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask13_15());
 
-        Assertions.assertEquals(Collections.singletonList(createFragmentedTask6_13()), actualTasks.splitTasks());
-        Assertions.assertEquals(expectedTasks, actualTasks.newTasks());
+        Assertions.assertEquals(List.of(createFragmentedTask6_13()), actualTasks.splitTasks());
+        Assertions.assertEquals(List.of(createFragmentedTask15_16(), createExampleDuringWorkDayTask13_15()), actualTasks.newTasks());
     }
-
-
-    @Test
-    void sliceTaskFromFrontAndAddToEndOfDay() {
-        var newTask = Task.builder()
-                .startTime(beforeDateTime)
-                .endTime(middleDateTime)
-                .taskPriority(Priority.LOW)
-                .category(Category.HEALTH_APPOINTMENT)
-                .place(place)
-                .build();
-
-        Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        Assertions.assertEquals(
-                new TaskChangelistDto(
-                        List.of(createExampleTask6_14().setStartTime(fourteenoclock).setEndTime(fourteenoclock.plusMinutes(150)), newTask),
-                        List.of(createExampleTask6_14().setStartTime(middleDateTime).setEndTime(halfaftersixteen))),
-                taskService.placeNewTask(newTask)
-        );
-    }
-
 
     private Task createExampleTask6_14() {
         return Task.builder()
@@ -360,7 +326,7 @@ class TaskServiceTest {
                 .startTime(fifteenoclock)
                 .taskPriority(Priority.LOW)
                 .category(Category.OFFICE_WORK)
-                .endTime(eighteenoclock)
+                .endTime(sixteenoclock)
                 .place(place)
                 .placementLimit(createPlacementLimit())
                 .build();

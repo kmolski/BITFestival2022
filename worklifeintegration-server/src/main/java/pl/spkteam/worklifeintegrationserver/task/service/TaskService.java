@@ -124,6 +124,7 @@ public class TaskService {
         var splitTasks = splits.get(false);
 
         var newTasks = splits.get(true);
+        tasksForTheDay.add(newTask);
         for (var movedTask : newTasks) {
             movedTask = moveTask(movedTask, tasksForTheDay);
             tasksForTheDay.add(movedTask);
