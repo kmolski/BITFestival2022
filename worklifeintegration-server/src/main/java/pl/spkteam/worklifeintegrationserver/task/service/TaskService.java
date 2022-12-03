@@ -139,6 +139,9 @@ public class TaskService {
                 .max(Comparator.naturalOrder())
                 .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
         var endTime = startTime.plus(duration);
+        if (endTime.toLocalTime().isAfter(movedTask.getPlacementLimit().getEndTime())) {
+            throw new IllegalStateException("Cannot finish moved task today");
+        }
         return movedTask.setStartTime(startTime).setEndTime(endTime);
     }
 
