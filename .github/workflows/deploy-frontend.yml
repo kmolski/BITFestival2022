@@ -36,4 +36,4 @@ jobs:
 
     - name: Deploy to S3 bucket
       working-directory: ./worklifeintegration-app
-      run: aws s3 sync ./build/ s3:/worklifeintegration-app/ --delete
+      run: aws s3 sync ./build/ s3://worklifeintegration-app/ --delete
