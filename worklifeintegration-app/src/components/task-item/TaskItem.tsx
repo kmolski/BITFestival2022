@@ -7,7 +7,8 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { Card } from '@mui/material';
+import { Card, Modal } from '@mui/material';
+import RemoveTask from '../remove-task/RemoveTask';
 
 {/* <div className="TaskItem">
 <>{props.task.name}</>
@@ -31,6 +32,7 @@ export function TaskItem(props: {task: Task, height:number}) {
         <Typography color="text.secondary" variant="body2">
           Godzina taska
         </Typography>
+        <RemoveTask task={props.task}/>
     </Card>
   );
 }
