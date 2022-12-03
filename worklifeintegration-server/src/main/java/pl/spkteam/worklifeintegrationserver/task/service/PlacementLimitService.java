@@ -6,6 +6,8 @@ import pl.spkteam.worklifeintegrationserver.restapi.exception.EntityNotFoundExce
 import pl.spkteam.worklifeintegrationserver.task.model.PlacementLimit;
 import pl.spkteam.worklifeintegrationserver.task.repo.PlacementLimitRepository;
 
+import java.util.Collection;
+
 @Service
 @RequiredArgsConstructor
 public class PlacementLimitService {
@@ -15,5 +17,9 @@ public class PlacementLimitService {
     public PlacementLimit getPlacementLimitById(Long placementLimitId) {
         return placementLimitRepository.findById(placementLimitId)
                 .orElseThrow(() -> new EntityNotFoundException(placementLimitId, PlacementLimit.class));
+    }
+
+    public Collection<PlacementLimit> getPlacementLimits() {
+        return placementLimitRepository.findAll();
     }
 }

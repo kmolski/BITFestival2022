@@ -5,12 +5,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-//import java.util.Date;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Place {
 
     @Id
@@ -21,8 +23,4 @@ public class Place {
     private String name;
 
     private long transportTimeMinutes;
-    //private Date openingTime;
-    //private Date closingTime;
 }
-
-//nie wiem czy wchodzic tak gleboko ze dodacczas otwarcia i zamkniecia

@@ -19,21 +19,19 @@ import java.time.LocalDateTime;
 public class TaskController {
 
     private final TaskRepository taskRepository;
-
     private final TaskService taskService;
     private final TaskMapper taskMapper;
 
     @GetMapping
     public EntityListDto<TaskDto> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
                                            @RequestParam(value = "end", required = false) LocalDateTime end) {
-        var dtoList = taskService.getTasksInTimeInterval(start, end).stream()
-                .map(taskMapper::mapTaskEntityToDto).toList();
+        var dtoList = taskService.getTasksInTimeInterval(start, end).stream().map(taskMapper::mapTaskEntityToDto).toList();
         return new EntityListDto<>(dtoList);
     }
 
     @GetMapping("/fromDay")
-    public EntityListDto<TaskDto> getTasksFromDay(LocalDateTime date) {
-        var dtoList = taskService.getTasksFromDay(date).stream().map(taskMapper::mapTaskEntityToDto).toList();
+    public EntityListDto<TaskDto> getTasksFromToday(LocalDateTime date) {
+        var dtoList = taskService.getTasksFromToday(date).stream().map(taskMapper::mapTaskEntityToDto).toList();
         return new EntityListDto<>(dtoList);
     }
 
@@ -47,7 +45,6 @@ public class TaskController {
             return null;
         }
     }
-
 
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable("id") Long id) {

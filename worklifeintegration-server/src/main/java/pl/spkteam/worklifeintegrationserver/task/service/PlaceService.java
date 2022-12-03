@@ -6,6 +6,8 @@ import pl.spkteam.worklifeintegrationserver.restapi.exception.EntityNotFoundExce
 import pl.spkteam.worklifeintegrationserver.task.model.Place;
 import pl.spkteam.worklifeintegrationserver.task.repo.PlaceRepository;
 
+import java.util.Collection;
+
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
@@ -15,5 +17,9 @@ public class PlaceService {
     public Place getPlaceById(Long placeId) {
         return placeRepository.findById(placeId)
                 .orElseThrow(() -> new EntityNotFoundException(placeId, Place.class));
+    }
+
+    public Collection<Place> getPlaces() {
+        return placeRepository.findAll();
     }
 }

@@ -29,7 +29,7 @@ public class TaskService {
 
     //zrobic jak uzytkownik bedzie chcial inna, na razie collection nie robie
     public Pair<LocalDateTime, LocalDateTime> searchForEmptyPeriods(LocalDateTime date, Duration duration, Task newTask) {
-        Iterable<Task> tasks = getTasksFromDay(date);
+        Iterable<Task> tasks = getTasksFromToday(date);
         ArrayList<Task> tasksToSort = new ArrayList<>();
         tasks.forEach(tasksToSort::add);
         tasksToSort.add(newTask);
@@ -52,7 +52,7 @@ public class TaskService {
         //posprawdzac po end time i do konca dnia czy jest czas - nie konca dnia tylko przedzialu pracy
     }
 
-    public Collection<Task> getTasksFromDay(LocalDateTime date) {
+    public Collection<Task> getTasksFromToday(LocalDateTime date) {
         Iterable<Task> allTasks = taskRepository.findAll();
         Collection<Task> tasksFromDay = new ArrayList<>();
         for (Task t : allTasks) {
@@ -117,7 +117,7 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public TaskChangelistDto placeNewTask(Task newTask) {
-        var tasksForTheDay = getTasksFromDay(newTask.getStartTime());
+        var tasksForTheDay = getTasksFromToday(newTask.getStartTime());
         var splits = tasksForTheDay.stream()
                 .flatMap(newTask::splitOverlappingTask)
                 .collect(Collectors.partitioningBy(newTask::containsTimePeriodOf));

@@ -133,7 +133,7 @@ class TaskServiceTest {
         expectedTasks.add(createExampleTask6_14());
         expectedTasks.add(createExampleTask16_1715());
 
-        Collection<Task> actualTasks = taskService.getTasksFromDay(sixoclock);
+        Collection<Task> actualTasks = taskService.getTasksFromToday(sixoclock);
 
         Assertions.assertEquals(expectedTasks, actualTasks);
     }
