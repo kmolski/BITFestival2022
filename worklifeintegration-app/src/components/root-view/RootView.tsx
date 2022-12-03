@@ -1,5 +1,6 @@
 import { Button, Grid, Stack } from '@mui/material';
 import { State } from 'xstate';
+import AddTask from '../add-task/AddTask';
 import NestedGrid from '../nested-grid/NestedGrid';
 
 function RootView(props: {state: any, send: any
@@ -10,9 +11,7 @@ function RootView(props: {state: any, send: any
         <Stack direction="row" spacing={2}>
             <NestedGrid taskData={props.state.context.task_data}/>
             <Stack direction="column" spacing={2}>
-                <Button variant="text">Text</Button>
-                <Button variant="contained">Contained</Button>
-                <Button variant="outlined">Outlined</Button>
+                <AddTask/>
             </Stack>
         </Stack>
     </div>
