@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
 import { emptyTaskCollection, Task, TaskCollection } from '../../utils/task';
 import { Button, Typography } from '@mui/material';
+import { sendType, stateType } from '../../machines/types';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -17,7 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function Column(props:{columnName:string, taskList:Task[]}) {
+function Column(props:{columnName:string, taskList:Task[], state: stateType, send: sendType}) {
     const containerRef = React.useRef<HTMLDivElement | null>(null)
     const [oneDayEquivalentHeight, setOneDayEquivalentHeight] = useState(500)
 
@@ -52,24 +53,24 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 // console.log(task.end);
                 // console.log('task.end.diff(task.start, "days")');
                 // console.log(task.end.diff(task.start));
-                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
+                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}  state={props.state} send={props.send}/>)
             })}
         </Grid> 
     );
 }
 
-export default function NestedGrid(props: {taskData:TaskCollection}) {
+export default function NestedGrid(props: {taskData:TaskCollection, state: stateType, send: sendType}) {
   return (
     <div className='Column'>
     <Box sx={{ flexGrow: 1, height: '100%'}}>
       <Grid sx={{ height: '100%'}} container spacing={1}>
-        <Column columnName="Monday" taskList={props.taskData.Monday}/>
-        <Column columnName="Tuesday" taskList={props.taskData.Tuesday}/>
-        <Column columnName="Wednesday" taskList={props.taskData.Wednesday}/>
-        <Column columnName="Thursday" taskList={props.taskData.Thursday}/>
-        <Column columnName="Friday" taskList={props.taskData.Friday}/>
-        <Column columnName="Saturday" taskList={props.taskData.Saturday}/>
-        <Column columnName="Sunday" taskList={props.taskData.Sunday}/>
+        <Column columnName="Monday" taskList={props.taskData.Monday} state={props.state} send={props.send}/>
+        <Column columnName="Tuesday" taskList={props.taskData.Tuesday} state={props.state} send={props.send}/>
+        <Column columnName="Wednesday" taskList={props.taskData.Wednesday} state={props.state} send={props.send}/>
+        <Column columnName="Thursday" taskList={props.taskData.Thursday} state={props.state} send={props.send}/>
+        <Column columnName="Friday" taskList={props.taskData.Friday} state={props.state} send={props.send}/>
+        <Column columnName="Saturday" taskList={props.taskData.Saturday} state={props.state} send={props.send}/>
+        <Column columnName="Sunday" taskList={props.taskData.Sunday} state={props.state} send={props.send}/>
       </Grid>
     </Box>
     </div>

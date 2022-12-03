@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { Card, Grid, TextField } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -12,9 +12,10 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment, { Moment } from 'moment';
 import { sendType, stateType } from '../../machines/types';
 import './AddTask.css'
-import { stateValuesEqual } from 'xstate/lib/State';
+import { State, stateValuesEqual } from 'xstate/lib/State';
 import { Task } from '../../utils/task';
 import { TaskItem } from '../task-item/TaskItem';
+import { EventData, EventObject, TypegenDisabled } from 'xstate';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -31,13 +32,30 @@ const style = {
   margin: '12px',
 };
 
+export function SimpleTaskItem(props: {task: Task}) {
+  return (
+    <Card sx={{ width: '100%', height: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <Typography gutterBottom variant="h6" component="div">
+              {props.task.name}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Typography color="text.secondary" variant="body2">
+          Godzina taska
+        </Typography>
+    </Card>
+  );
+}
+
 function TaskContainer(props: {tasks: Task[]}){
   
 
   if (props.tasks.length === 0) return <></>;
   
   return <div>  
-    {props.tasks.map((task: Task) => <TaskItem task={task} height={500}/>)}
+    {props.tasks.map((task: Task) => <SimpleTaskItem task={task}/>)}
 </div>
 
 }

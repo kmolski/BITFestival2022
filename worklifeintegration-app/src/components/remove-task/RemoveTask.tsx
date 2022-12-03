@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { FormLabel, TextField } from '@mui/material';
+import { Card, FormLabel, TextField } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -12,6 +12,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment, { Moment } from 'moment';
 import { Task } from '../../utils/task';
 import { margin } from '@mui/system';
+import { sendType, stateType } from '../../machines/types';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -26,7 +27,7 @@ const style = {
 };
 
 
-export default function RemoveTask(props: {task: Task}) {
+export default function RemoveTask(props: {task: Task, state: stateType, send: sendType}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -50,7 +51,7 @@ export default function RemoveTask(props: {task: Task}) {
                 <tr>Priority: {props.task.taskPriority}</tr>
             </Box>
           <Button variant="contained" color="error" 
-          onClick={()=>{/*komunikat do backendu żeby usunąć task*/setOpen(false)}}>Remove</Button>
+          onClick={()=>{props.send('DELETE', {id: props.task.id});setOpen(false)}}>Remove</Button>
         </Box>
       </Modal>
     </div>
