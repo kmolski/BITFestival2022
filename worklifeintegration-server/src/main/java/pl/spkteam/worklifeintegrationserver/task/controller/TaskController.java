@@ -1,16 +1,15 @@
 package pl.spkteam.worklifeintegrationserver.task.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.spkteam.worklifeintegrationserver.task.dto.EntityListDto;
-import pl.spkteam.worklifeintegrationserver.task.model.Priority;
+import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 
 
 @RestController
@@ -34,19 +33,13 @@ public class TaskController {
     }
 
     @PostMapping
-    public Collection<Task> createTask(Task task) {
-        Collection<Task> oldTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
-        Collection<Task> changedTasksToConfirm = new ArrayList<>();
-        if (!oldTasks.isEmpty()) {
-            for (Task cTask : oldTasks) {
-                if (checkIfAdjustableTask(cTask))
-                    return null;
-            }
-            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, oldTasks));
+    public TaskChangelistDto createTask(@Valid Task task) {
+        var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
+        if (taskService.canTaskBePlaced(overlappingTasks)) {
+            return taskService.placeNewTask(task);
+        } else {
+            return null;
         }
-        //po prostu nie ma zadnych wydarzen w przedziale
-        changedTasksToConfirm.add(task);
-        return changedTasksToConfirm;
     }
 
 
@@ -56,11 +49,7 @@ public class TaskController {
     }
 
     @PostMapping("/commit")
-    public void confirmCreatingTasks(Collection<Task> tasks) {
-        tasks.forEach(taskRepository::save);
-    }
-
-    private boolean checkIfAdjustableTask(Task task) {
-        return !task.getTaskPriority().equals(Priority.HIGH);
+    public void commitTaskChangelist(@Valid TaskChangelistDto changelist) {
+        taskService.saveTaskChangelist(changelist);
     }
 }

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
+import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Category;
 import pl.spkteam.worklifeintegrationserver.task.model.Place;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
@@ -20,6 +21,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
@@ -27,6 +29,9 @@ class TaskServiceTest {
 
     private final LocalDateTime beforeDateTime = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 7, 30, 0);
+
+    private final LocalDateTime middleDateTime = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 10, 30, 0);
 
     private final LocalDateTime startWorkDateTime = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 6, 0, 0);
@@ -193,6 +198,25 @@ class TaskServiceTest {
         Assertions.assertEquals(expectedTasks, actualTasks);
     }
 
+
+    @Test
+    void sliceTaskFromFrontAndAddToEndOfDay() {
+        var newTask = Task.builder()
+                .startTime(beforeDateTime)
+                .endTime(middleDateTime)
+                .taskPriority(Priority.LOW)
+                .category(Category.HEALTH_APPOINTMENT)
+                .place(place)
+                .build();
+
+        Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask()));
+        Assertions.assertEquals(
+                new TaskChangelistDto(
+                        List.of(createExampleTask().setStartTime(endWorkDateTime).setEndTime(endWorkDateTime.plusMinutes(150)), newTask),
+                        List.of(createExampleTask().setStartTime(middleDateTime).setEndTime(endWorkDateTime))),
+                taskService.placeNewTask(newTask)
+        );
+    }
 
     private Task createExampleTask() {
         return Task.builder()

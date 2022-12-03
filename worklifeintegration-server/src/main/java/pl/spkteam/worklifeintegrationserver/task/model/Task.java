@@ -10,6 +10,7 @@ import pl.spkteam.worklifeintegrationserver.task.api.TimeIntervalEntity;
 import pl.spkteam.worklifeintegrationserver.task.validation.StartTimeBeforeEndTime;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 @Data
 @Builder
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @StartTimeBeforeEndTime
-public class Task implements TimeIntervalEntity {
+public class Task implements TimeIntervalEntity, Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,4 +48,27 @@ public class Task implements TimeIntervalEntity {
 
     @Enumerated(EnumType.ORDINAL)
     private Category category;
+
+    @Override
+    public Task clone() {
+        try {
+            return (Task) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public Stream<Task> splitOverlappingTask(Task task) {
+        var intersectionLower = task.startTime.isAfter(startTime) ? task.startTime : startTime;
+        var intersectionUpper = task.endTime.isBefore(endTime) ? task.endTime : endTime;
+        return Stream.of(task.clone().setEndTime(intersectionLower),
+                         task.clone().setStartTime(intersectionLower).setEndTime(intersectionUpper),
+                         task.clone().setStartTime(intersectionUpper))
+                .filter(splitTask -> splitTask.startTime.isBefore(splitTask.endTime))
+                .map(splitTask -> splitTask.setId(null));
+    }
+
+    public boolean containsTimePeriodOf(Task task) {
+        return (!task.startTime.isBefore(startTime)) && (!task.endTime.isAfter(endTime));
+    }
 }

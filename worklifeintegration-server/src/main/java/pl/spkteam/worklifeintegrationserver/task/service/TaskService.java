@@ -3,7 +3,10 @@ package pl.spkteam.worklifeintegrationserver.task.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
+import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
 import java.time.Duration;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -108,5 +112,47 @@ public class TaskService {
             changedTasksToConfirm.add(task);
         }
         return changedTasksToConfirm;
+    }
+
+    @Transactional(readOnly = true)
+    public TaskChangelistDto placeNewTask(Task newTask) {
+        var tasksForTheDay = getTasksFromDay(newTask.getStartTime());
+        var splits = tasksForTheDay.stream()
+                .flatMap(newTask::splitOverlappingTask)
+                .collect(Collectors.partitioningBy(newTask::containsTimePeriodOf));
+        var splitTasks = splits.get(false);
+
+        var newTasks = splits.get(true);
+        for (var movedTask : newTasks) {
+            movedTask = moveTask(movedTask, tasksForTheDay);
+            tasksForTheDay.add(movedTask);
+        }
+        newTasks.add(newTask);
+
+        return new TaskChangelistDto(newTasks, splitTasks);
+    }
+
+    private Task moveTask(Task movedTask, Collection<Task> otherTasks) {
+        var duration = Duration.between(movedTask.getStartTime(), movedTask.getEndTime());
+        var startTime = otherTasks.stream()
+                .map(Task::getEndTime)
+                .max(Comparator.naturalOrder())
+                .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
+        var endTime = startTime.plus(duration);
+        return movedTask.setStartTime(startTime).setEndTime(endTime);
+    }
+
+    @Transactional
+    public void saveTaskChangelist(TaskChangelistDto changelist) {
+        taskRepository.saveAll(changelist.newTasks());
+        taskRepository.saveAll(changelist.splitTasks());
+    }
+
+    public boolean canTaskBePlaced(Collection<Task> overlappingTasks) {
+        return !overlappingTasks.isEmpty() && overlappingTasks.stream().allMatch(this::isTaskAdjustable);
+    }
+
+    private boolean isTaskAdjustable(Task task) {
+        return !task.getTaskPriority().equals(Priority.HIGH);
     }
 }
