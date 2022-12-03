@@ -9,11 +9,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableWebMvc
 @EnableWebSecurity
-public class WebSecurityConfig extends AbstractSecurityWebApplicationInitializer {
+public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -28,9 +31,16 @@ public class WebSecurityConfig extends AbstractSecurityWebApplicationInitializer
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
+                .cors()
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/**").permitAll()
                 .and()
                 .build();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
     }
 }

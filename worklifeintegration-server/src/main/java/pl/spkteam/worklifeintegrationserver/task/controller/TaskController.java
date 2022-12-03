@@ -57,7 +57,7 @@ public class TaskController {
         taskRepository.deleteById(id);
     }
 
-    @PostMapping
+    @PostMapping("/commit")
     public void confirmCreatingTasks(Collection<Task> tasks) {
         tasks.forEach(taskRepository::save);
     }

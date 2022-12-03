@@ -14,11 +14,11 @@ import Typography from '@mui/material/Typography';
 
 export function TaskItem(props: {task: Task}) {
   return (
-    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'cyan' }}>
+    <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
       <Box sx={{ my: 3, mx: 2 }}>
         <Grid container alignItems="center">
           <Grid item xs>
-            <Typography gutterBottom variant="h4" component="div">
+            <Typography gutterBottom variant="h6" component="div">
               {props.task.name}
             </Typography>
           </Grid>
