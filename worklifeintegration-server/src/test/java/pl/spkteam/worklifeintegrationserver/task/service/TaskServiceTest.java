@@ -7,8 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
+import pl.spkteam.worklifeintegrationserver.task.mapper.TaskMapper;
 import pl.spkteam.worklifeintegrationserver.task.model.*;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
@@ -18,7 +20,6 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,6 +97,9 @@ class TaskServiceTest {
     @Mock
     TaskRepository taskRepository;
 
+    @Autowired
+    TaskMapper taskMapper;
+
     @Test
     void searchForEmptyPeriodsTest() {
         Mockito.when(taskRepository.findAll()).thenReturn(List.of());
@@ -142,7 +146,7 @@ class TaskServiceTest {
 
     @Test
     void changeAlreadyExistingTasksAllDayCaseTest() {
-        TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleLongerThanWorkDayTask());
+        TaskChangelistDto actualTasks = taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(createExampleLongerThanWorkDayTask()));
 
         Assertions.assertEquals(List.of(), actualTasks.splitTasks());
         Assertions.assertEquals(List.of(createExampleLongerThanWorkDayTask()), actualTasks.newTasks());
@@ -150,7 +154,7 @@ class TaskServiceTest {
 
     @Test
     void changeAlreadyExistingTasksAfterWorkCaseTest() {
-        TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleTask16_1715());
+        TaskChangelistDto actualTasks = taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(createExampleTask16_1715()));
 
         Assertions.assertEquals(List.of(), actualTasks.splitTasks());
         Assertions.assertEquals(List.of(createExampleTask16_1715()), actualTasks.newTasks());
@@ -163,7 +167,7 @@ class TaskServiceTest {
         expectedTasks.add(createFragmentedTask13_14());
 
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask11_13());
+        TaskChangelistDto actualTasks = taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(createExampleDuringWorkDayTask11_13()));
 
         Assertions.assertEquals(expectedTasks, actualTasks.splitTasks());
         Assertions.assertEquals(List.of(createMovedTask14_16(), createExampleDuringWorkDayTask11_13()), actualTasks.newTasks());
@@ -176,7 +180,7 @@ class TaskServiceTest {
         expectedTasks.add(createExampleDuringWorkDayTask5_7());
 
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask5_7());
+        TaskChangelistDto actualTasks = taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(createExampleDuringWorkDayTask5_7()));
 
         Assertions.assertEquals(List.of(createFragmentedTask7_14()), actualTasks.splitTasks());
         Assertions.assertEquals(expectedTasks, actualTasks.newTasks());
@@ -185,7 +189,7 @@ class TaskServiceTest {
     @Test
     void changeAlreadyExistingTasksAfterWorkCaseOverlappingTest() {
         Mockito.when(taskRepository.findAll()).thenReturn(List.of(createExampleTask6_14()));
-        TaskChangelistDto actualTasks = taskService.placeNewTask(createExampleDuringWorkDayTask13_15());
+        TaskChangelistDto actualTasks = taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(createExampleDuringWorkDayTask13_15()));
 
         Assertions.assertEquals(List.of(createFragmentedTask6_13()), actualTasks.splitTasks());
         Assertions.assertEquals(List.of(createFragmentedTask15_16(), createExampleDuringWorkDayTask13_15()), actualTasks.newTasks());
