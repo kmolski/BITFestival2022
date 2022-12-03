@@ -33,7 +33,6 @@ public class Task implements TimeIntervalObject, Cloneable {
     @NotNull
     private LocalDateTime endTime;
 
-    //jesli polaczenie nie tylko z biura to sie zastanowic
     @NotNull
     @ManyToOne
     private Place place;
