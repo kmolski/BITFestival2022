@@ -2,6 +2,7 @@ import { mockComponent } from "react-dom/test-utils"
 import moment from 'moment' // temporary import for example intialisation
 
 export type Task = {
+    id: number,
     name: string
     start: moment.Moment
     end: moment.Moment
@@ -36,6 +37,7 @@ function arrayTimeToStr(array_time: number[]): string{
 
 function rawTaskToTask(item: any): Task {
     return {
+        id: item.id,
         name: item.title,
         start: moment(item.startTime),
         end: moment(item.endTime),
