@@ -24,6 +24,9 @@ public class Task implements TimeIntervalEntity {
     private Long id;
 
     @NotNull
+    private String title;
+
+    @NotNull
     private LocalDateTime startTime;
 
     @NotNull

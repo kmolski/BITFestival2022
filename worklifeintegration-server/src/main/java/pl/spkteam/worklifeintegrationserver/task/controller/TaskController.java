@@ -35,8 +35,6 @@ public class TaskController {
 
     @PostMapping
     public Collection<Task> createTask(Task task) {
-        LocalDateTime startTime = task.getStartTime();
-        LocalDateTime endTime = task.getEndTime();
         Collection<Task> oldTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         Collection<Task> changedTasksToConfirm = new ArrayList<>();
         if (!oldTasks.isEmpty()) {
@@ -44,7 +42,7 @@ public class TaskController {
                 if (checkIfAdjustableTask(cTask))
                     return null;
             }
-            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, startTime, endTime, oldTasks, changedTasksToConfirm));
+            changedTasksToConfirm.addAll(taskService.changeAlreadyExistingTasks(task, oldTasks, changedTasksToConfirm));
         }
         //po prostu nie ma zadnych wydarzen w przedziale
         changedTasksToConfirm.add(task);
