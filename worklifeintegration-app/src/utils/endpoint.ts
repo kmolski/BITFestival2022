@@ -1,5 +1,6 @@
 import moment from "moment"
 import { title } from "process";
+import { start } from "repl";
 
 const LINK_BASE = 'http://worklifeintegration-env.eba-xbs3ibpj.eu-central-1.elasticbeanstalk.com'
 const LINK_TASKS = LINK_BASE + '/tasks'
@@ -15,26 +16,24 @@ export function fetchWeek(week_start: moment.Moment): Promise<any> {
         }).then(result => result.json())
 }
 
-export function suggestTask(props: {title: string}): Promise<any> {
+export function suggestTask(props: {title: string, start: moment.Moment, end: moment.Moment}): Promise<any> {
     return fetch(LINK_TASKS,
         {
             method: 'POST',
             headers: { 'Accept': '*/*', 'Content-Type': 'application/json'},
             body: JSON.stringify({
-                id: null,
                 title: props.title,
-                startTime: "2022-12-01T18:00:00.000",
-                endTime: "2022-12-01T19:00:00.000",
+                startTime: props.start.format("YYYY-MM-DDTHH:mm:ss.000"),
+                endTime: props.end.format("YYYY-MM-DDTHH:mm:ss.000"),
                 placeId: 1,
                 placementLimitId: 1,
                 taskPriority: "MEDIUM",
-                category: null,
             }),
         }).then(result => result.json())
 }
 
 export function commitTask(props: {blob: any}): Promise<any> {
-    return fetch(LINK_TASKS,
+    return fetch(LINK_TASKS + '/commit',
         {
             method: 'POST',
             headers: { 'Accept': '*/*', 'Content-Type': 'application/json'},
