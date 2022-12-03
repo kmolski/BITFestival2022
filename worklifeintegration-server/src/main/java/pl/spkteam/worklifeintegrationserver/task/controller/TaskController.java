@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-@RestController("/tasks")
+@RestController
+@RequestMapping("/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -22,9 +23,7 @@ public class TaskController {
     @GetMapping
     public List<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
                                @RequestParam(value = "end", required = false) LocalDateTime end) {
-        var startTime = Optional.ofNullable(start).orElse(LocalDateTime.MIN);
-        var endTime = Optional.ofNullable(end).orElse(LocalDateTime.MAX);
-        return taskRepository.findInTimeInterval(startTime, endTime);
+        return taskRepository.findInTimeInterval(start, end);
     }
 
     @GetMapping("/fromDay")

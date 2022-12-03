@@ -11,6 +11,6 @@ import java.util.List;
 @Transactional
 public interface TaskRepository extends CrudRepository<Task, Long> {
 
-    @Query("from Task where startTime < :end or endTime > :start")
+    @Query("from Task where (startTime is null or startTime < :end) or (endTime is null or endTime > :start)")
     List<Task> findInTimeInterval(LocalDateTime start, LocalDateTime end);
 }
