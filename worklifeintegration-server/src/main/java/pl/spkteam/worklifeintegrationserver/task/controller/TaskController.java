@@ -40,7 +40,7 @@ public class TaskController {
         var task = taskMapper.mapTaskDtoToEntity(taskDto);
         var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         if (taskService.canTaskBePlaced(overlappingTasks)) {
-            return taskService.placeNewTask(task);
+            return taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(task));
         } else {
             return null;
         }
@@ -53,6 +53,6 @@ public class TaskController {
 
     @PostMapping("/commit")
     public void commitTaskChangelist(@Valid TaskChangelistDto changelist) {
-        taskService.saveTaskChangelist(changelist);
+        taskService.saveTaskChangelist(taskMapper.mapTaskChangelistDtoToModel(changelist));
     }
 }
