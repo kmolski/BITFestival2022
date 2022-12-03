@@ -3,7 +3,7 @@ name: backend build & deploy
 on:
   push:
     branches: [ "main" ]
-    paths: [ "worklifeintegration-server/**" ]
+    paths: [ ".github/**", "worklifeintegration-server/**" ]
 
 permissions:
   contents: write
