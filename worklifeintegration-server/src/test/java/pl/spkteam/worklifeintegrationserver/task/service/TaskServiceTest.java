@@ -73,6 +73,12 @@ class TaskServiceTest {
     private final LocalDateTime endWorkDateTimeAdded = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 16, 0, 0);
 
+    private final LocalDateTime startDoctorAppointmentB = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 13, 0, 0);
+
+    private final LocalDateTime endDoctorAppointmentB = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 15, 0, 0);
+
     private final Duration oneHour = Duration.ofMinutes(60);
 
     private final Place place = createExamplePlace();
@@ -169,6 +175,20 @@ class TaskServiceTest {
         Mockito.when(taskRepository.findAll()).thenReturn(Collections.singleton(createExampleTask()));
 
         Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleDuringWorkDayTaskA(), Collections.singleton(createExampleTask()));
+
+        Assertions.assertEquals(expectedTasks, actualTasks);
+    }
+
+
+    @Test
+    void changeAlreadyExistingTasksAfterWorkCaseOverlappingTest() {
+        Collection<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(createFragmentedTaskB1());
+        expectedTasks.add(createFragmentedTaskB2());
+        expectedTasks.add(createExampleDuringWorkDayTaskB());
+        Mockito.when(taskRepository.findAll()).thenReturn(Collections.singleton(createExampleTask()));
+
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleDuringWorkDayTaskB(), Collections.singleton(createExampleTask()));
 
         Assertions.assertEquals(expectedTasks, actualTasks);
     }
@@ -273,6 +293,37 @@ class TaskServiceTest {
                 .place(place)
                 .build();
     }
+
+    private Task createExampleDuringWorkDayTaskB() {
+        return Task.builder()
+                .startTime(startDoctorAppointmentB)
+                .taskPriority(Priority.HIGH)
+                .category(Category.HEALTH_APPOINTMENT)
+                .endTime(endDoctorAppointmentB)
+                .place(createExamplePlace2())
+                .build();
+    }
+
+    private Task createFragmentedTaskB1() {
+        return Task.builder()
+                .startTime(startWorkDateTime)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(endDoctorAppointment)
+                .place(place)
+                .build();
+    }
+
+    private Task createFragmentedTaskB2() {
+        return Task.builder()
+                .startTime(endDoctorAppointmentB)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(endWorkDateTimeAdded)
+                .place(place)
+                .build();
+    }
+
     private Place createExamplePlace() {
         Place newPlace = new Place();
         newPlace.setName("GliwiceAEI");
