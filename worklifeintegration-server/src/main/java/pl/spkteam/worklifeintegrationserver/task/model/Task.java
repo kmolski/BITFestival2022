@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @StartTimeBeforeEndTime
-//@NoOverlapWithExistingTask
 public class Task implements TimeIntervalEntity {
 
     @Id
@@ -26,14 +25,16 @@ public class Task implements TimeIntervalEntity {
 
     //jesli polaczenie nie tylko z biura to sie zastanowic
     @NotNull
-    @ManyToOne // tu dodać jakieś joincolumn czy coś
+    @ManyToOne
     private Place place;
+
+    @NotNull
+    @ManyToOne
+    private PlacementLimit placementLimits;
 
     @Enumerated(EnumType.ORDINAL)
     private Priority taskPriority;
 
     @Enumerated(EnumType.ORDINAL)
     private Category category;
-
-    private boolean canBeSplit;
 }
