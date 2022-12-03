@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import './NestedGrid.css';
 import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
 import { emptyTaskCollection, Task, TaskCollection } from '../../utils/task';
@@ -22,7 +23,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
     const [tasks, setTaskList] = useState(props.taskList);
     return (
         <React.Fragment>
-        <Grid item xs={1.5}>
+        <Grid item xs={1.5} sx={{bgcolor: 'blue' }}>
         <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
             <Box sx={{ my: 3, mx: 2 }}>
                 <Grid container alignItems="center">
@@ -52,7 +53,8 @@ function Column(props:{columnName:string, taskList:Task[]}) {
 
 export default function NestedGrid(props: {taskData:TaskCollection}) {
   return (
-    <Box sx={{ flexGrow: 1, maxHeight: 240 }}>
+    <div className='Column'>
+    <Box sx={{ flexGrow: 1}}>
       <Grid container spacing={1}>
         <Column columnName="Monday" taskList={props.taskData.Monday}/>
         <Column columnName="Tuesday" taskList={props.taskData.Tuesday}/>
@@ -63,5 +65,6 @@ export default function NestedGrid(props: {taskData:TaskCollection}) {
         <Column columnName="Sunday" taskList={props.taskData.Sunday}/>
       </Grid>
     </Box>
+    </div>
   );
 }
