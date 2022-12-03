@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
-import { emptyTaskCollection, Task } from '../../utils/task';
+import { emptyTaskCollection, Task, TaskCollection } from '../../utils/task';
 import { Typography } from '@mui/material';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -17,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Column(props:{columnName:string, taskList:Task[]}) {
-    const oneDayEquivalentHeight = 100;
+    const oneDayEquivalentHeight = 500;
     const oneHourEquivalentHeight = oneDayEquivalentHeight / 24;
     const [tasks, setTaskList] = useState(props.taskList);
     return (
@@ -34,33 +34,33 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 </Grid>
             </Box>
         </Box>
-        {tasks.map((task) => (
-            <TaskItem task={{
+        {tasks.map((task) => {
+            console.log(task.start);
+            console.log(task.end);
+            console.log('task.end.diff(task.start, "days")');
+            console.log(task.end.diff(task.start));
+            return (<TaskItem task={{
                 name: task.name,
                 start: task.start,
                 end: task.end
-            }} height={task.end.diff(task.start, "days")*oneHourEquivalentHeight}/>
-                ))}
+            }} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
+        })}
         </Grid> 
         </React.Fragment>
     );
 }
 
-export default function NestedGrid() {
-
-const [rows, setRows] = useState(emptyTaskCollection);
-
-  const table = [{text:"some"}, {text:"some"}, {text:"some"}];
+export default function NestedGrid(props: {taskData:TaskCollection}) {
   return (
     <Box sx={{ flexGrow: 1, maxHeight: 240 }}>
       <Grid container spacing={1}>
-        <Column columnName="Monday" taskList={emptyTaskCollection.Monday}/>
-        <Column columnName="Tuesday" taskList={emptyTaskCollection.Tuesday}/>
-        <Column columnName="Wednesday" taskList={emptyTaskCollection.Wednesday}/>
-        <Column columnName="Thursday" taskList={emptyTaskCollection.Thursday}/>
-        <Column columnName="Friday" taskList={emptyTaskCollection.Friday}/>
-        <Column columnName="Saturday" taskList={emptyTaskCollection.Saturday}/>
-        <Column columnName="Sunday" taskList={emptyTaskCollection.Sunday}/>
+        <Column columnName="Monday" taskList={props.taskData.Monday}/>
+        <Column columnName="Tuesday" taskList={props.taskData.Tuesday}/>
+        <Column columnName="Wednesday" taskList={props.taskData.Wednesday}/>
+        <Column columnName="Thursday" taskList={props.taskData.Thursday}/>
+        <Column columnName="Friday" taskList={props.taskData.Friday}/>
+        <Column columnName="Saturday" taskList={props.taskData.Saturday}/>
+        <Column columnName="Sunday" taskList={props.taskData.Sunday}/>
       </Grid>
     </Box>
   );

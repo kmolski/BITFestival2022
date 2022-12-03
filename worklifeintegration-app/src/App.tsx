@@ -11,11 +11,10 @@ export const GlobalStateContext = createContext({});
 
 function App() {
   const [state, send] = useMachine(mainMachine);
-  
   return (
     <GlobalStateContext.Provider value={{ state: state, send: send }}>
       <div className="App">
-      <RootView/>
+      {state.context.task_data !== null && <RootView state={state} send={send}/>}
     </div>
   
     </GlobalStateContext.Provider>
