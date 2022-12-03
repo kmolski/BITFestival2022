@@ -33,7 +33,6 @@ jobs:
 
     - name: Deploy to AWS Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
-      working-directory: ./worklifeintegration-server
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -41,4 +40,4 @@ jobs:
         environment_name: Worklifeintegration-env
         version_label: ${{ steps.date.outputs.date }}
         region: eu-central-1
-        deployment_package: build/libs/worklifeintegration-server-0.0.1-SNAPSHOT.jar
+        deployment_package: worklifeintegration-server/build/libs/worklifeintegration-server-0.0.1-SNAPSHOT.jar
