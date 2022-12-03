@@ -1,18 +1,19 @@
 import { Button, Grid, Stack } from '@mui/material';
 import { State } from 'xstate';
+import { sendType, stateType } from '../../machines/types';
+import { TaskCollection } from '../../utils/task';
 import AddTask from '../add-task/AddTask';
 import NestedGrid from '../nested-grid/NestedGrid';
 import './RootView.css'
 
-function RootView(props: {state: any, send: any
-}) {
+function RootView(props: {state: stateType, send: sendType}) {
 
   return (
     <div className="RootView">
         <Stack direction="row" spacing={2}>
-            <div className='Grid'><NestedGrid taskData={props.state.context.task_data}/></div>
+            <div className='Grid'><NestedGrid taskData={props.state.context.task_data as TaskCollection}/></div>
             <Stack direction="column" spacing={2}>
-                <AddTask/>
+                <AddTask state={props.state} send={props.send}/>
             </Stack>
         </Stack>
     </div>
