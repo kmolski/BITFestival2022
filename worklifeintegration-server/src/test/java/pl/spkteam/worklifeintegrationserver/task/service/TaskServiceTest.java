@@ -457,7 +457,7 @@ class TaskServiceTest {
     void createPropositionTest() {
         Long id = 1L;
         Mockito.when(placementLimitService.getPlacementLimitById(id)).thenReturn(createPlacementLimit());
-        Duration duration = Duration.between(LocalTime.NOON, LocalTime.of(13, 30)); //czyli 1,5h
+        Duration duration = Duration.between(LocalTime.NOON, LocalTime.of(13, 30));
         List<Task> allTasks = new ArrayList<>();
         allTasks.add(createExampleTask6_14());
         Mockito.when(taskRepository.findAll()).thenReturn(allTasks);

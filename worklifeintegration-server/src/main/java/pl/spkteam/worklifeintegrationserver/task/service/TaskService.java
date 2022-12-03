@@ -13,11 +13,7 @@ import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +49,6 @@ public class TaskService {
             return Pair.of(startTime, endTime);
         return null;
 
-        //posprawdzac po end time i do konca dnia czy jest czas - nie konca dnia tylko przedzialu pracy
     }
 
     public Collection<Task> getTasksFromToday(LocalDateTime date) {
@@ -92,25 +87,18 @@ public class TaskService {
             Duration endingDuration = Duration.between(startTime, oldEndTime);
 
             Task newTaskFromOld;
-            //gdy przekracza obowiazki dzienne
-            //struktura taski do modyfikacji i usuniecia
             if (duration.compareTo(oldDuration) > 0) {
                 oldTask.setEndTime(null);
                 oldTask.setStartTime(null);
-                //oldTask do wykasowania
                 return null;
-            }
-            //przypadek gdy na poczatku pracy i konczy sie przed koncem
-            else if (startTime.isBefore(oldStartTime) && endTime.isBefore(oldEndTime)) {
-                oldTask.setStartTime(oldStartTime.plus(startingConflict)); //przestawienie starego
+            } else if (startTime.isBefore(oldStartTime) && endTime.isBefore(oldEndTime)) {
+                oldTask.setStartTime(oldStartTime.plus(startingConflict));
                 Pair<LocalDateTime, LocalDateTime> newPeriod = searchForEmptyPeriods(oldStartTime, startingConflict, task);
-                newTaskFromOld = createNewTaskBasedOnOlder(oldTask, newPeriod); //dodatek ze starego
-            }
-            //gdy jest w srodku
-            else {
-                oldTask.setEndTime(startTime); //przestawienie starego
+                newTaskFromOld = createNewTaskBasedOnOlder(oldTask, newPeriod);
+            } else {
+                oldTask.setEndTime(startTime);
                 Pair<LocalDateTime, LocalDateTime> newPeriod = searchForEmptyPeriods(oldStartTime, endingDuration, task);
-                newTaskFromOld = createNewTaskBasedOnOlder(oldTask, newPeriod); //dodatek ze starego
+                newTaskFromOld = createNewTaskBasedOnOlder(oldTask, newPeriod);
             }
             changedTasksToConfirm.add(oldTask);
             changedTasksToConfirm.add(newTaskFromOld);
@@ -161,7 +149,7 @@ public class TaskService {
 
     public TaskChangelist createProposition(Long placementLimitId, Duration length, LocalDateTime date) {
         Collection<Task> tasks = getTasksFromToday(date);
-        PlacementLimit placementLimit = placementLimitService.getPlacementLimitById(placementLimitId); //sprawdzic czy dziala
+        PlacementLimit placementLimit = placementLimitService.getPlacementLimitById(placementLimitId);
         for (Task currentTask : tasks) {
             Duration duration = Duration.between(currentTask.getStartTime(), currentTask.getEndTime());
             if (isTaskAdjustable(currentTask) && duration.compareTo(length) > 0) {

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { Card, Modal, Paper } from '@mui/material';
 import { sendType, stateType } from '../../machines/types';
 
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -22,7 +23,11 @@ const style = {
   p: 4,
 };
 
-export function TaskItem(props: {task: Task, height:number, state: stateType, send: sendType}) {
+interface Dictionary<T> {
+  [Key: string]: T;
+}
+const dictionary_of_colors: any = {"LOW":"green", "MEDIUM":"cyan", "HIGH":"red"};
+export function TaskItem(props: {task: Task, height:number, }) {
   const [show, setShow] = useState(false);
   const hour_start = props.task.start.format("H:mm")
   const hour_end = props.task.end.format("H:mm")
@@ -42,7 +47,7 @@ export function TaskItem(props: {task: Task, height:number, state: stateType, se
           </Grid>
         </Grid>
         <Typography color="text.secondary" variant="body2">
-          {hour_start + " - " + hour_end}
+          Godzina taska
         </Typography>
         <Modal
         open={open}
@@ -63,7 +68,6 @@ export function TaskItem(props: {task: Task, height:number, state: stateType, se
           onClick={()=>{props.send('DELETE', {id: props.task.id});setOpen(false)}}>Remove</Button>
         </Box>
       </Modal>
-
     </Card>
   );
 }
