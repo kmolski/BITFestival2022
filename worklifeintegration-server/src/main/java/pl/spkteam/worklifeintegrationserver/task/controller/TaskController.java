@@ -11,7 +11,10 @@ import pl.spkteam.worklifeintegrationserver.task.mapper.TaskMapper;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
 
@@ -59,5 +62,13 @@ public class TaskController {
     @PostMapping("/commit")
     public void commitTaskChangelist(@RequestBody @Valid TaskChangelistDto changelist) {
         taskService.saveTaskChangelist(taskMapper.mapTaskChangelistDtoToModel(changelist));
+    }
+
+    @GetMapping("/suggested")
+    public Collection<TaskChangelistDto> getSuggestedTasks(@RequestParam(name = "placementLimit") Long placementLimit, @RequestParam(name = "length") Duration length, @RequestParam(name = "days") Long days, @RequestParam(value = "start") LocalDateTime start) {
+        return taskService.getTaskFromAllDays(placementLimit, length, days, start).stream()
+                .map(taskMapper::mapTaskChangelistToDto)
+                .collect(Collectors.toList());
+
     }
 }
