@@ -2,6 +2,7 @@ package pl.spkteam.worklifeintegrationserver.task.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.spkteam.worklifeintegrationserver.task.dto.EntityListDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
@@ -10,7 +11,6 @@ import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 @RestController
@@ -23,21 +23,21 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public List<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
-                               @RequestParam(value = "end", required = false) LocalDateTime end) {
-        return taskRepository.findInTimeInterval(start, end);
+    public EntityListDto<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
+                                        @RequestParam(value = "end", required = false) LocalDateTime end) {
+        return new EntityListDto<>(taskService.getTasksInTimeInterval(start, end));
     }
 
     @GetMapping("/fromDay")
-    public Iterable<Task> getTasksFromDay(LocalDateTime date) {
-        return taskService.getTasksFromDay(date);
+    public EntityListDto<Task> getTasksFromDay(LocalDateTime date) {
+        return new EntityListDto<>(taskService.getTasksFromDay(date));
     }
 
     @PostMapping
     public Collection<Task> createTask(Task task) {
         LocalDateTime startTime = task.getStartTime();
         LocalDateTime endTime = task.getEndTime();
-        Collection<Task> oldTasks = getTasks(task.getStartTime(), task.getEndTime());
+        Collection<Task> oldTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         Collection<Task> changedTasksToConfirm = new ArrayList<>();
         if (!oldTasks.isEmpty()) {
             for (Task cTask : oldTasks) {

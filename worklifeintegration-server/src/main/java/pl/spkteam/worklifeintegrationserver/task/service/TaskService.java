@@ -18,6 +18,10 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
+    public Collection<Task> getTasksInTimeInterval(LocalDateTime start, LocalDateTime end) {
+        return taskRepository.findInTimeInterval(start, end);
+    }
+
     //zrobic jak uzytkownik bedzie chcial inna, na razie collection nie robie
     public Pair<LocalDateTime, LocalDateTime> searchForEmptyPeriods(LocalDateTime date, Duration duration, Task newTask) {
         Iterable<Task> tasks = getTasksFromDay(date);
@@ -43,7 +47,7 @@ public class TaskService {
         //posprawdzac po end time i do konca dnia czy jest czas - nie konca dnia tylko przedzialu pracy
     }
 
-    public Iterable<Task> getTasksFromDay(LocalDateTime date) {
+    public Collection<Task> getTasksFromDay(LocalDateTime date) {
         Iterable<Task> allTasks = taskRepository.findAll();
         Collection<Task> tasksFromDay = new ArrayList<>();
         for (Task t : allTasks) {
