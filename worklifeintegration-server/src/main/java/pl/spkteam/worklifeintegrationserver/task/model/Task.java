@@ -35,5 +35,7 @@ public class Task implements TimeIntervalEntity {
     @Enumerated(EnumType.ORDINAL)
     private Category category;
 
-    private boolean canBeSplit;
+    @NotNull
+    private boolean canBeSplit = getTaskPriority().equals(Priority.HIGH);
+
 }
