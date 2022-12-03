@@ -29,6 +29,13 @@ interface Dictionary<T> {
 const dictionary_of_colors: any = {"LOW":"green", "MEDIUM":"cyan", "HIGH":"red"};
 export function TaskItem(props: {task: Task, height:number, }) {
   const [show, setShow] = useState(false);
+  const hour_start = props.task.start.format("H:mm")
+  const hour_end = props.task.end.format("H:mm")
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <Card sx={{ width: '100%', height: '100%', maxWidth: 200, 
     maxHeight:props.height, bgcolor: dictionary_of_colors[props.task.taskPriority] }} 
@@ -59,8 +66,7 @@ export function TaskItem(props: {task: Task, height:number, }) {
                 <tr>Priority: {props.task.taskPriority}</tr>
             </Box>
           <Button variant="contained" color="error" 
-          onClick={()=>{props.send('DELETE', {id: props.task.id});
-          setOpen(false)}}>Remove</Button>
+          onClick={()=>{props.send('DELETE', {id: props.task.id});setOpen(false)}}>Remove</Button>
         </Box>
       </Modal>
     </Card>

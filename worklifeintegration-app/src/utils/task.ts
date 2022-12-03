@@ -58,13 +58,13 @@ export function getDay(task_list: any[], day: string): Task[]{
 
 export function mapRawToTaskCollection(data: any): TaskCollection {
     const result = {
-        Monday: getDay(data, '0'),
-        Tuesday: getDay(data, '1'),
-        Wednesday: getDay(data, '2'),
-        Thursday: getDay(data, '3'),
-        Friday: getDay(data, '4'),
-        Saturday: getDay(data, '5'),
-        Sunday: getDay(data, '6'),
+        Monday: getDay(data, '1'),
+        Tuesday: getDay(data, '2'),
+        Wednesday: getDay(data, '3'),
+        Thursday: getDay(data, '4'),
+        Friday: getDay(data, '5'),
+        Saturday: getDay(data, '6'),
+        Sunday: getDay(data, '0'),
     };
     console.log("Mapping result", result);
     return result

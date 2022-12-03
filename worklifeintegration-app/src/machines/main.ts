@@ -14,7 +14,7 @@ export interface MainContext {
 
 const initialContext: MainContext = {
   task_data: null,
-  week_start: moment().startOf('week'),
+  week_start: moment(moment().add(7, 'd')).startOf('week'),
   suggestion_data: [],
   suggestion_data_dont_use: {},
 }
@@ -59,9 +59,12 @@ export const mainMachine = createMachine<MainContext>({
           actions: log("Data loading error")
         }
       },
-      always: [
-        {target: 'wait', cond: 'isDataLoaded'} // use "cond" to execute transition give a condition
-      ],
+      // always: [
+      //   {target: 'wait', cond: 'isDataLoaded'} // use "cond" to execute transition give a condition
+      // ],
+      after: {
+        1000: {target: 'wait'} 
+      }
     },
     wait: {
       // wait for user to make an action
@@ -100,6 +103,13 @@ export const mainMachine = createMachine<MainContext>({
         }
       },
     },
+    waitClear: {
+      entry: ['scream'],
+      after: {
+        // temporary go back after 10s
+        500: { target: "init" },
+      },
+    },
     commit: {
       invoke: {
         id: 'commitTask',
@@ -108,8 +118,7 @@ export const mainMachine = createMachine<MainContext>({
           return commitTask({blob: context.suggestion_data_dont_use})
         },
         onDone: {
-          target: 'fetch',
-          cond:'isDataClear',
+          target: 'waitClear',
           actions: assign({ suggestion_data: (_context, _event) => {
             console.log("Suggestion data commited");
             return [] },
@@ -118,8 +127,8 @@ export const mainMachine = createMachine<MainContext>({
           })
         },
         onError: {
-          target: 'wait', // todo: handle errors
-          actions: log("Data suggestion error")
+          target: 'waitClear', // todo: handle errors
+          actions: log("Data commit error")
         }
       },
     },
@@ -130,8 +139,8 @@ export const mainMachine = createMachine<MainContext>({
           console.log("Delete task");
           return deleteTask({id: event.id})
         },
-        onDone: {target: 'fetch'},
-        onError: {target: 'fetch'},
+        onDone: {target: 'waitClear'},
+        onError: {target: 'waitClear'},
       },
     }
   },
@@ -151,9 +160,17 @@ export const mainMachine = createMachine<MainContext>({
     clearState: (context, event) => {
       console.log("Set context to", initialContext)
       return {  task_data: null,
-        week_start: moment().startOf('week'),
+        week_start: moment(moment().add(7, 'd')).startOf('week'),
         suggestion_data: [],
         suggestion_data_dont_use: {},}
+    },
+    scream: (context, event) => {
+      console.log("AAAAAAAAAAAAAAAAAA")
+    
+    },
+    screamB: (context, event) => {
+      console.log("BBBBBBBBBBBBB")
+    
     },
   }
 }
