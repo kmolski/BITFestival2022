@@ -20,9 +20,9 @@ jobs:
         java-version: '17'
         distribution: 'corretto'
         
-    # - name: Run tests with Gradle
-    #   working-directory: ./worklifeintegration-server
-    #   run: ./gradlew test
+    - name: Run tests with Gradle
+      working-directory: ./worklifeintegration-server
+      run: ./gradlew test
     
     - name: Build Spring Boot JAR with Gradle
       working-directory: ./worklifeintegration-server
