@@ -29,10 +29,10 @@ class TaskServiceTest {
             Month.DECEMBER, 3, 7, 30, 0);
 
     private final LocalDateTime startWorkDateTime = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 8, 0, 0);
+            Month.DECEMBER, 3, 6, 0, 0);
 
     private final LocalDateTime endWorkDateTime = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 16, 0, 0);
+            Month.DECEMBER, 3, 14, 0, 0);
 
     private final LocalDateTime startWorkDateTime2 = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 16, 30, 0);
@@ -45,6 +45,12 @@ class TaskServiceTest {
 
     private final LocalDateTime endWorkDateTimeFromAnotherDay = LocalDateTime.of(2022,
             Month.JULY, 3, 16, 15, 0);
+
+    private final LocalDateTime startWorkDateTimeLong = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 7, 30, 0);
+
+    private final LocalDateTime endWorkDateTimeLong = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 16, 15, 0);
 
     private final Duration oneHour = Duration.ofMinutes(60);
 
@@ -62,9 +68,9 @@ class TaskServiceTest {
     void searchForEmptyPeriodsTest() {
         Mockito.when(taskRepository.findAll()).thenReturn(Collections.emptyList());
         LocalDateTime expectedStartTime = LocalDateTime.of(2022,
-                Month.DECEMBER, 3, 16, 0, 0);
+                Month.DECEMBER, 3, 14, 0, 0);
         LocalDateTime expectedEndTime = LocalDateTime.of(2022,
-                Month.DECEMBER, 3, 17, 0, 0);
+                Month.DECEMBER, 3, 15, 0, 0);
         Pair<LocalDateTime, LocalDateTime> expectedEmptyPeriod = Pair.of(expectedStartTime, expectedEndTime);
 
         Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, testTask);
@@ -94,8 +100,8 @@ class TaskServiceTest {
         allTasks.add(createExampleTaskFromAnotherDay());
         Mockito.when(taskRepository.findAll()).thenReturn(allTasks);
         Collection<Task> expectedTasks = new ArrayList<>();
-        allTasks.add(createExampleTask());
-        allTasks.add(createExampleTask2());
+        expectedTasks.add(createExampleTask());
+        expectedTasks.add(createExampleTask2());
 
         Collection<Task> actualTasks = taskService.getTasksFromDay(startWorkDateTime);
 
@@ -103,13 +109,11 @@ class TaskServiceTest {
     }
 
     @Test
-    void createNewTaskBasedOnOlderTest() {
+    void changeAlreadyExistingTasksAllDayCaseTest() {
 
-    }
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleLongerThanWorkDayTask(), Collections.singleton(testTask), new ArrayList<>());
 
-    @Test
-    void changeAlreadyExistingTasksTest() {
-
+        Assertions.assertNull(actualTasks);
     }
 
     private Task createExampleTask() {
@@ -142,9 +146,26 @@ class TaskServiceTest {
                 .build();
     }
 
+    private Task createExampleLongerThanWorkDayTask() {
+        return Task.builder()
+                .startTime(startWorkDateTimeLong)
+                .taskPriority(Priority.HIGH)
+                .category(Category.HEALTH_APPOINTMENT)
+                .endTime(endWorkDateTimeLong)
+                .place(createExamplePlace2())
+                .build();
+    }
+
     private Place createExamplePlace() {
         Place newPlace = new Place();
         newPlace.setName("GliwiceAEI");
+        newPlace.setTransportTimeMinutes(30);
+        return newPlace;
+    }
+
+    private Place createExamplePlace2() {
+        Place newPlace = new Place();
+        newPlace.setName("Doctor");
         newPlace.setTransportTimeMinutes(30);
         return newPlace;
     }

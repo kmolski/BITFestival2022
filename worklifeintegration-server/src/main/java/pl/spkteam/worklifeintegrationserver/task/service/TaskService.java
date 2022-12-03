@@ -70,7 +70,9 @@ public class TaskService {
                 .build();
     }
 
-    public Collection<Task> changeAlreadyExistingTasks(Task task, LocalDateTime startTime, LocalDateTime endTime, Collection<Task> oldTasks, Collection<Task> changedTasksToConfirm) {
+    public Collection<Task> changeAlreadyExistingTasks(Task task, Collection<Task> oldTasks, Collection<Task> changedTasksToConfirm) {
+        LocalDateTime startTime = task.getStartTime();
+        LocalDateTime endTime = task.getEndTime();
         for (Task oldTask : oldTasks) {
             LocalDateTime oldStartTime = oldTask.getStartTime();
             LocalDateTime oldEndTime = oldTask.getEndTime();
@@ -86,8 +88,7 @@ public class TaskService {
                 oldTask.setEndTime(null);
                 oldTask.setStartTime(null);
                 //oldTask do wykasowania
-                Pair<LocalDateTime, LocalDateTime> newPeriod = searchForEmptyPeriods(oldStartTime, oldDuration, task);
-                newTaskFromOld = createNewTaskBasedOnOlder(oldTask, newPeriod); //dodatek ze starego
+                return null;
             }
             //przypadek gdy na poczatku pracy i konczy sie przed koncem
             else if (startTime.isBefore(oldStartTime) && endTime.isBefore(oldEndTime)) {
