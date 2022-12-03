@@ -19,9 +19,13 @@ jobs:
       with:
         node-version: '18'
         
+    - name: Install deps with NPM
+      working-directory: ./worklifeintegration-app
+      run: npm install
+        
     - name: Build React web app
       working-directory: ./worklifeintegration-app
-      run: npm install && npm run build
+      run: npm run build
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
