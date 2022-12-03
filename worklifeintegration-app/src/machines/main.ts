@@ -1,6 +1,8 @@
-import { createMachine, assign } from 'xstate';
-import { emptyTaskCollection, TaskCollection } from '../utils/task';
+import { createMachine, assign, spawn } from 'xstate';
+import { emptyTaskCollection, mapRawToTaskCollection, TaskCollection } from '../utils/task';
 import moment from 'moment'
+import { fetchWeek } from '../utils/endpoint';
+import { log, pure } from 'xstate/lib/actions';
 
 interface MainContext {
   // todo: set context that makes sense
@@ -8,20 +10,24 @@ interface MainContext {
   week_start: moment.Moment;
 }
 
+const initialContext: MainContext = {
+  task_data: null,
+  week_start: moment().startOf('week'),
+}
+
 export const mainMachine = createMachine<MainContext>({
-  id: "fetch",
+  id: "mainMachine",
   initial: "init",
-  context: {
-    task_data: null,
-    week_start: moment().startOf('week'),
-  },
+  context: initialContext,
   states: {
     init: {
       // first "dummy" state
       // can be used to re-initialise app with an "entry" action
+      // todo: clear on init
       always: [
         {target: 'auth'}
-      ]
+      ],
+      entry: ['clearState']
     },
     auth: {
       // used for authentication / user selection
@@ -31,11 +37,27 @@ export const mainMachine = createMachine<MainContext>({
       ],
     },
     fetch: {
-      // todo: fetching logic
+      invoke: {
+        id: 'getWeekData',
+        src: (context, event) => {
+          console.log("Invoke fetch");
+          return fetchWeek()
+        },
+        onDone: {
+          target: 'fetch',
+          internal: true,
+          actions: assign({ task_data: (context, event) => {
+            console.log("Init mapping");
+            return mapRawToTaskCollection(event.data.items) }})
+        },
+        onError: {
+          target: 'init',
+          actions: log("Data loading error")
+        }
+      },
       always: [
-        {target: 'wait'} // use "cond" to execute transition give a condition
+        {target: 'wait', cond: 'isDataLoaded'} // use "cond" to execute transition give a condition
       ],
-      exit: ['fetchData'] // action taken when state is exited
     },
     wait: {
       // wait for user to make an action
@@ -55,11 +77,14 @@ export const mainMachine = createMachine<MainContext>({
   },
 },
 {
+  guards: {
+    isDataLoaded:  (context, event) => {
+      console.log("IS DATA LOADED?", context.task_data !== null);
+      return context.task_data !== null;
+    },
+  },
   actions: {
-    // action implementations
-    fetchData: assign({
-      task_data: (context, event) => emptyTaskCollection
-    }),
+    clearState: (context, event) => initialContext,
   }
 }
 );

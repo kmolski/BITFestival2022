@@ -27,3 +27,27 @@ export const emptyTaskCollection = {
                {name: "Hacking2", start: moment(moment().calendar()).add(2, 'h'), end: moment(moment().calendar()).add(4, 'h')}], // placeholder example
     Sunday: [],
 }
+
+export function getDay(task_list: any[], day: string): Task[]{
+   const clean = task_list.filter((item) => moment(item.startTime).format('d') === day)
+   const mapped_items = clean.map(item => {
+    return {
+    name: item.category, // todo: set correct value
+    start: moment(item.startDate),
+    end: moment(item.endTime),
+   }})
+   return mapped_items;
+}
+
+export function mapRawToTaskCollection(data: any): TaskCollection {
+    console.log("Mapping data...")
+    return {
+        Monday: getDay(data, '0'),
+        Tuesday: getDay(data, '1'),
+        Wednesday: getDay(data, '2'),
+        Thursday: getDay(data, '3'),
+        Friday: getDay(data, '4'),
+        Saturday: getDay(data, '5'),
+        Sunday: getDay(data, '6'),
+    }
+}

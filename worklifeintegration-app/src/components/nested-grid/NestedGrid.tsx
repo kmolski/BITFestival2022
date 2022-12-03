@@ -5,7 +5,6 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
-import moment from 'moment';
 import { emptyTaskCollection, Task } from '../../utils/task';
 import { Typography } from '@mui/material';
 
@@ -18,6 +17,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Column(props:{columnName:string, taskList:Task[]}) {
+    const oneDayEquivalentHeight = 100;
+    const oneHourEquivalentHeight = oneDayEquivalentHeight / 24;
     const [tasks, setTaskList] = useState(props.taskList);
     return (
         <React.Fragment>
@@ -38,7 +39,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 name: task.name,
                 start: task.start,
                 end: task.end
-            }}/>
+            }} height={task.end.diff(task.start, "days")*oneHourEquivalentHeight}/>
                 ))}
         </Grid> 
         </React.Fragment>
@@ -51,7 +52,7 @@ const [rows, setRows] = useState(emptyTaskCollection);
 
   const table = [{text:"some"}, {text:"some"}, {text:"some"}];
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, maxHeight: 240 }}>
       <Grid container spacing={1}>
         <Column columnName="Monday" taskList={emptyTaskCollection.Monday}/>
         <Column columnName="Tuesday" taskList={emptyTaskCollection.Tuesday}/>
