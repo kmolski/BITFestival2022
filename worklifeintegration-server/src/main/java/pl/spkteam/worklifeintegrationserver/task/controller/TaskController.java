@@ -52,7 +52,7 @@ public class TaskController {
     }
 
     @PostMapping("/commit")
-    public void commitTaskChangelist(@Valid TaskChangelistDto changelist) {
+    public void commitTaskChangelist(@RequestBody @Valid TaskChangelistDto changelist) {
         taskService.saveTaskChangelist(taskMapper.mapTaskChangelistDtoToModel(changelist));
     }
 }
