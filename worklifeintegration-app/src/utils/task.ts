@@ -52,7 +52,17 @@ export function getDay(task_list: any[], day: string): Task[]{
     return moment(item.startTime).format('d') === day
 })
    const mapped_items = clean.map(item => {
-    return rawTaskToTask(item)})
+    return rawTaskToTask(item)}).sort((a: Task, b: Task) => {
+        const a_m = parseFloat(a.start.format("H")) * 60 +  parseFloat(a.start.format("m"));
+        const b_m =parseFloat(b.start.format("H")) * 60 +  parseFloat(b.start.format("m"));
+        if (a_m < b_m) {
+            return -1
+        }
+        if (a_m === b_m) {
+            return 0
+        }
+        return 1;
+    })    
    return mapped_items;
 }
 

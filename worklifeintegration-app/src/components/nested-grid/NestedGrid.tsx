@@ -7,7 +7,7 @@ import './NestedGrid.css';
 import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
 import { emptyTaskCollection, Task, TaskCollection } from '../../utils/task';
-import { Button, Typography } from '@mui/material';
+import { Button, Chip, Typography } from '@mui/material';
 import { sendType, stateType } from '../../machines/types';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -36,18 +36,18 @@ function Column(props:{columnName:string, taskList:Task[], state: stateType, sen
     } ,[])
 
     return (
-        <Grid height="100%" ref={containerRef} item xs={1.5} sx={{bgcolor: 'blue' }}>
-            <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+        <Grid height="100%" ref={containerRef} item xs={1.5} sx={{bgcolor: '#c8d9df' }}>
+            <Paper elevation={6}>
+            <Box sx={{ width: '100%', maxWidth: 200, bgcolor: '#3cc6fc' }}>
                 <Box sx={{ my: 3, mx: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Button component="div">
-                            {props.columnName}
-                            </Button>
+                        <Chip label={props.columnName} size="medium" variant="filled"/>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
+            </Paper>
             {tasks.map((task) => {
                 // console.log(task.start);
                 // console.log(task.end);

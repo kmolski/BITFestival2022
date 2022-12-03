@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Card, Grid, TextField } from '@mui/material';
+import { Card, Chip, Grid, TextField } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -33,8 +33,12 @@ const style = {
 };
 
 export function SimpleTaskItem(props: {task: Task}) {
+  const day = props.task.start.format("dddd")
+  const hour_start = props.task.start.format("H:mm")
+  const hour_end = props.task.end.format("H:mm")
+
   return (
-    <Card sx={{ width: '100%', height: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+    <Card sx={{ width: '100%', height: '100%', maxWidth: 200, bgcolor: '#3cc6fc' }}>
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h6" component="div">
@@ -43,7 +47,8 @@ export function SimpleTaskItem(props: {task: Task}) {
           </Grid>
         </Grid>
         <Typography color="text.secondary" variant="body2">
-          Godzina taska
+         <Chip label={day} size="small" variant="outlined" />
+          {hour_start + ' - ' +hour_end}
         </Typography>
     </Card>
   );
@@ -102,7 +107,7 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleOpen}>+ Create</Button>
+      <Box m={2} pt={1}><Button variant="contained" onClick={handleOpen}>+&nbsp;Create</Button></Box>
       <Modal
         open={open}
         onClose={handleClose}
@@ -113,14 +118,14 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
           <TextField id="outlined-basic" className='Paded'
           label="Name" variant="outlined" onChange={handleTitleChange}/>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DesktopDatePicker
+            <Box m={0.1} pt={0.1}><DesktopDatePicker
                 className='Paded'
                 label="Date"
                 inputFormat="MM/DD/YYYY"
                 value={timeStart}
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
-                />
+                /></Box> 
                 <TimePicker
                 className='Paded'
                 label="Start time"
@@ -137,8 +142,7 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
                 />
             </LocalizationProvider>
             <Button variant="contained" onClick={sendTaskMessage}>Find time</Button>
-            <button onClick={sendCommitMessage}>Commit the task</button>
-            <TaskContainer tasks={props.state.context.suggestion_data}/>
+            <div onClick={sendCommitMessage}><TaskContainer tasks={props.state.context.suggestion_data}/></div>
         </Box>
       </Modal>
     </div>
