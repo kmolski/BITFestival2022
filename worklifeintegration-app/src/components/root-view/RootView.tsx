@@ -15,7 +15,7 @@ function RootView(props: {state: stateType, send: sendType}) {
             <div className='Grid'><NestedGrid taskData={props.state.context.task_data as TaskCollection}/></div>
             {/* <Stack height="100%" direction="column" spacing={2}> */}
             <Stack height="100%" direction="column" spacing={2}>
-                <AddTask/>
+                <AddTask state={props.state} send={props.send}/>
             </Stack>
         </Stack>
     </div>
