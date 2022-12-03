@@ -5,14 +5,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
-@Builder
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlacementLimit {
 
     @Id
