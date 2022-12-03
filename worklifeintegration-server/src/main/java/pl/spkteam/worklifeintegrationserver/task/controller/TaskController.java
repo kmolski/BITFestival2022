@@ -33,7 +33,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskChangelistDto createTask(@Valid Task task) {
+    public TaskChangelistDto createTask(@Valid Task task, LocalDateTime firstConstraint, LocalDateTime secondConstraint) {
         var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         if (taskService.canTaskBePlaced(overlappingTasks)) {
             return taskService.placeNewTask(task);
