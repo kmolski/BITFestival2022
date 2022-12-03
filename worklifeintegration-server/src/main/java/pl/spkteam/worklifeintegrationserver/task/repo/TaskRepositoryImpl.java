@@ -2,10 +2,12 @@ package pl.spkteam.worklifeintegrationserver.task.repo;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Repository;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -18,15 +20,17 @@ public class TaskRepositoryImpl implements TaskRepositoryExt {
     public List<Task> findInTimeInterval(LocalDateTime start, LocalDateTime end) {
         var cb = entityManager.getCriteriaBuilder();
         var query = cb.createQuery(Task.class);
-        var root = query.from(Task.class);
+        var task = query.from(Task.class);
 
+        var predicates = new ArrayList<Predicate>();
         if (start != null) {
-            cb.and(cb.lessThan(root.get("startTime"), end));
+            predicates.add(cb.lessThan(task.get("startTime"), end));
         }
         if (end != null) {
-            cb.and(cb.greaterThan(root.get("endTime"), start));
+            predicates.add(cb.greaterThan(task.get("endTime"), start));
         }
 
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(query).getResultList();
     }
 }
