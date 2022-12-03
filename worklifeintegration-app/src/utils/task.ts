@@ -33,19 +33,19 @@ function arrayTimeToStr(array_time: number[]): string{
 
 export function getDay(task_list: any[], day: string): Task[]{
    const clean = task_list.filter((item) => {
-    return moment(arrayTimeToStr(item.startTime)).format('d') === day
+    return moment(item.startTime).format('d') === day
 })
    const mapped_items = clean.map(item => {
     return {
     name: item.category, // todo: set correct value
-    start: moment(arrayTimeToStr(item.startTime)),
-    end: moment(arrayTimeToStr(item.endTime)),
+    start: moment(item.startTime),
+    end: moment(item.endTime),
    }})
    return mapped_items;
 }
 
 export function mapRawToTaskCollection(data: any): TaskCollection {
-    return {
+    const result = {
         Monday: getDay(data, '0'),
         Tuesday: getDay(data, '1'),
         Wednesday: getDay(data, '2'),
@@ -53,5 +53,7 @@ export function mapRawToTaskCollection(data: any): TaskCollection {
         Friday: getDay(data, '4'),
         Saturday: getDay(data, '5'),
         Sunday: getDay(data, '6'),
-    }
+    };
+    console.log("Mapping result", result);
+    return result
 }

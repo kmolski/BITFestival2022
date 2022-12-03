@@ -41,7 +41,7 @@ export const mainMachine = createMachine<MainContext>({
         id: 'getWeekData',
         src: (context, event) => {
           console.log("Invoke fetch");
-          return fetchWeek()
+          return fetchWeek(context.week_start)
         },
         onDone: {
           target: 'fetch',
