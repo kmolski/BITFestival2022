@@ -26,14 +26,23 @@ class TaskServiceTest {
     private final LocalDateTime beforeDateTime = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 7, 30, 0);
 
-    private final LocalDateTime middleDateTime = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 10, 30, 0);
-
     private final LocalDateTime sixoclock = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 6, 0, 0);
 
     private final LocalDateTime fourteenoclock = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 14, 0, 0);
+
+    private final LocalDateTime eightoclock = LocalDateTime.of(2022,
+            Month.DECEMBER, 4, 8, 0, 0);
+
+    private final LocalDateTime tenoclock = LocalDateTime.of(2022,
+            Month.DECEMBER, 4, 10, 0, 0);
+
+    private final LocalDateTime halfafternine = LocalDateTime.of(2022,
+            Month.DECEMBER, 4, 9, 30, 0);
+
+    private final LocalDateTime halfaftereleven = LocalDateTime.of(2022,
+            Month.DECEMBER, 4, 11, 30, 0);
 
     private final LocalDateTime halfafterfifteen = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 15, 30, 0);
@@ -73,12 +82,6 @@ class TaskServiceTest {
 
     private final LocalDateTime eighteenoclock = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 18, 0, 0);
-
-    private final LocalDateTime firstConstraint = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 5, 0, 0);
-
-    private final LocalDateTime secondConstraint = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 20, 0, 0);
 
     private final LocalDateTime halfafterseven = LocalDateTime.of(2022,
             Month.DECEMBER, 3, 7, 30, 0);
@@ -202,6 +205,17 @@ class TaskServiceTest {
                 .taskPriority(Priority.LOW)
                 .category(Category.OFFICE_WORK)
                 .endTime(fourteenoclock)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    private Task createExampleTask8_10() {
+        return Task.builder()
+                .startTime(eightoclock)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(tenoclock)
                 .place(place)
                 .placementLimit(createPlacementLimit())
                 .build();
@@ -406,6 +420,39 @@ class TaskServiceTest {
                 .build();
     }
 
+    private Task createExampleTask8_930() {
+        return Task.builder()
+                .startTime(eightoclock)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(halfafternine)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    private Task createExampleTask930_10() {
+        return Task.builder()
+                .startTime(halfafternine)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(tenoclock)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
+    private Task createExampleTask10_1130() {
+        return Task.builder()
+                .startTime(tenoclock)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(halfaftereleven)
+                .place(place)
+                .placementLimit(createPlacementLimit())
+                .build();
+    }
+
     @Test
     void createPropositionTest() {
         Long id = 1L;
@@ -431,6 +478,39 @@ class TaskServiceTest {
 
     @Test
     void getTaskFromAllDaysTest() {
+        Long id = 1L;
+        Mockito.when(placementLimitService.getPlacementLimitById(id)).thenReturn(createPlacementLimit());
+        Duration duration = Duration.between(LocalTime.NOON, LocalTime.of(13, 30));
+        List<Task> allTasks = new ArrayList<>();
+        allTasks.add(createExampleTask6_14());
+        allTasks.add(createExampleTask8_10());
+        Mockito.when(taskRepository.findAll()).thenReturn(allTasks);
+        Long days = 2L;
+
+        Collection<TaskChangelist> testChangeLists = taskService.getTaskFromAllDays(id, duration, days, beforeDateTime);
+
+        TaskChangelist firstTaskChangeList = testChangeLists.iterator().next();
+        Assertions.assertEquals(Stream.of(createExampleTask730_14()).count(), firstTaskChangeList.splitTasks().size());
+        Assertions.assertEquals(createExampleTask730_14().getStartTime(), firstTaskChangeList.splitTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask730_14().getEndTime(), firstTaskChangeList.splitTasks().iterator().next().getEndTime());
+
+        Assertions.assertEquals(Stream.of(createExampleTask14_1530(), createExampleTask6_730()).count(), firstTaskChangeList.newTasks().size());
+        Assertions.assertEquals(createExampleTask14_1530().getStartTime(), firstTaskChangeList.newTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask14_1530().getEndTime(), firstTaskChangeList.newTasks().iterator().next().getEndTime());
+        Assertions.assertEquals(createExampleTask6_730().getStartTime(), firstTaskChangeList.newTasks().stream().skip(1).iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask6_730().getEndTime(), firstTaskChangeList.newTasks().stream().skip(1).iterator().next().getEndTime());
+
+        TaskChangelist secondTaskChangeList = testChangeLists.stream().skip(1).iterator().next();
+        Assertions.assertEquals(Stream.of(createExampleTask930_10()).count(), secondTaskChangeList.splitTasks().size());
+        Assertions.assertEquals(createExampleTask930_10().getStartTime(), secondTaskChangeList.splitTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask930_10().getEndTime(), secondTaskChangeList.splitTasks().iterator().next().getEndTime());
+
+        Assertions.assertEquals(Stream.of(createExampleTask8_930(), createExampleTask10_1130()).count(), secondTaskChangeList.newTasks().size());
+        Assertions.assertEquals(createExampleTask10_1130().getStartTime(), secondTaskChangeList.newTasks().iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask10_1130().getEndTime(), secondTaskChangeList.newTasks().iterator().next().getEndTime());
+        Assertions.assertEquals(createExampleTask8_930().getStartTime(), secondTaskChangeList.newTasks().stream().skip(1).iterator().next().getStartTime());
+        Assertions.assertEquals(createExampleTask8_930().getEndTime(), secondTaskChangeList.newTasks().stream().skip(1).iterator().next().getEndTime());
+
 
     }
 }
