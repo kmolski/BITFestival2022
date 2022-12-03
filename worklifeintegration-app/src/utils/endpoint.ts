@@ -21,12 +21,14 @@ export function suggestTask(props: {title: string}): Promise<any> {
             method: 'POST',
             headers: { 'Accept': '*/*', 'Content-Type': 'application/json'},
             body: JSON.stringify({
+                id: null,
                 title: props.title,
-                startTime: "2022-12-02T02:00:00.000",
-                endTime: "2022-12-02T04:00:00.000",
+                startTime: "2022-12-01T18:00:00.000",
+                endTime: "2022-12-01T19:00:00.000",
                 placeId: 1,
                 placementLimitId: 1,
-                taskPriority: "MEDIUM"
+                taskPriority: "MEDIUM",
+                category: null,
             }),
         }).then(result => result.json())
 }
