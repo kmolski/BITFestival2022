@@ -5,6 +5,9 @@ export type Task = {
     name: string
     start: moment.Moment
     end: moment.Moment
+    placeId: number,
+    placementLimitId: number,
+    taskPriority: string,
 }
 
 export type TaskCollection = {
@@ -36,6 +39,9 @@ function rawTaskToTask(item: any): Task {
         name: item.title,
         start: moment(item.startTime),
         end: moment(item.endTime),
+        placeId: item.placeId,
+        placementLimitId: item.placementLimitId,
+        taskPriority: item.taskPriority,
     }
 }
 
