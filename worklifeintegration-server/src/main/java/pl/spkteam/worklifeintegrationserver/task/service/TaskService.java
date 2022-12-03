@@ -5,8 +5,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.spkteam.worklifeintegrationserver.restapi.exception.BadRequestException;
-import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.model.Task;
+import pl.spkteam.worklifeintegrationserver.task.model.TaskChangelist;
 import pl.spkteam.worklifeintegrationserver.task.model.Priority;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 
@@ -116,7 +116,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public TaskChangelistDto placeNewTask(Task newTask) {
+    public TaskChangelist placeNewTask(Task newTask) {
         var tasksForTheDay = getTasksFromToday(newTask.getStartTime());
         var splits = tasksForTheDay.stream()
                 .flatMap(newTask::splitOverlappingTask)
@@ -124,13 +124,15 @@ public class TaskService {
         var splitTasks = splits.get(false);
 
         var newTasks = splits.get(true);
+        tasksForTheDay.add(newTask);
         for (var movedTask : newTasks) {
             movedTask = moveTask(movedTask, tasksForTheDay);
             tasksForTheDay.add(movedTask);
         }
         newTasks.add(newTask);
-        //tutaj sprawdzic czy dobre zwracane
-        return new TaskChangelistDto(newTasks, splitTasks);
+
+        var deletedTasks = getTasksInTimeInterval(newTask.getStartTime(), newTask.getEndTime());
+        return new TaskChangelist(newTasks, splitTasks, deletedTasks);
     }
 
     private Task moveTask(Task movedTask, Collection<Task> otherTasks) {
@@ -141,22 +143,23 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
         var endTime = startTime.plus(duration);
         if (endTime.toLocalTime().isAfter(movedTask.getPlacementLimit().getEndTime())) {
-            throw new BadRequestException("Cannot finish moved task today");
+            throw new BadRequestException("Cannot finish moved task today: " + movedTask);
         }
         return movedTask.setStartTime(startTime).setEndTime(endTime);
     }
 
     @Transactional
-    public void saveTaskChangelist(TaskChangelistDto changelist) {
+    public void saveTaskChangelist(TaskChangelist changelist) {
         taskRepository.saveAll(changelist.newTasks());
         taskRepository.saveAll(changelist.splitTasks());
+        taskRepository.deleteAll(changelist.deletedTasks());
     }
 
     public boolean canTaskBePlaced(Collection<Task> overlappingTasks) {
-        return !overlappingTasks.isEmpty() && overlappingTasks.stream().allMatch(this::isTaskAdjustable);
+        return overlappingTasks.stream().allMatch(this::isTaskAdjustable);
     }
 
-    private boolean isTaskAdjustable(Task task) {
+    public boolean isTaskAdjustable(Task task) {
         return !task.getTaskPriority().equals(Priority.HIGH);
     }
 }
