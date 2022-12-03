@@ -16,6 +16,25 @@ export function fetchWeek(week_start: moment.Moment): Promise<any> {
         }).then(result => result.json())
 }
 
+export function getTaskSuggestions(props:
+    {
+        placementLimit: number,
+        taskLength: moment.Duration,
+        searchDays: number,
+        searchStart: moment.Moment,
+    }): Promise<any> {
+
+    const placementLimit = `?placementLimit=${props.placementLimit}`;
+    const length = `&length=${props.taskLength.toISOString()}`;
+    const days = `&days=${props.searchDays}`;
+    const start = `&start=${props.searchStart.format("YYYY-MM-DDTHH:mm:ss.000")}`;
+    return fetch(LINK_TASKS + '/suggested' + placementLimit + length + days + start,
+        {
+            method: 'GET',
+            headers: { Accept: '*/*' }
+        }).then(result => result.json())
+}
+
 export function suggestTask(props: {title: string, start: moment.Moment, end: moment.Moment}): Promise<any> {
     return fetch(LINK_TASKS,
         {
