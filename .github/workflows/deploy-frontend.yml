@@ -25,7 +25,7 @@ jobs:
         
     - name: Build React web app
       working-directory: ./worklifeintegration-app
-      run: npm run build
+      run: CI='' npm run build
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -36,4 +36,4 @@ jobs:
 
     - name: Deploy to S3 bucket
       working-directory: ./worklifeintegration-app
-      run: aws s3 sync ./build/ s3:/worklifeintegration-app/ --delete
+      run: aws s3 sync ./build/ s3://worklifeintegration-app/ --delete
