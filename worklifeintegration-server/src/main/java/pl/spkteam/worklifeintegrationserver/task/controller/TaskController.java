@@ -3,6 +3,7 @@ package pl.spkteam.worklifeintegrationserver.task.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.spkteam.worklifeintegrationserver.restapi.exception.BadRequestException;
 import pl.spkteam.worklifeintegrationserver.task.dto.EntityListDto;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskDto;
@@ -11,6 +12,8 @@ import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
 import java.time.LocalDateTime;
+
+import static java.util.function.Predicate.not;
 
 
 @RestController
@@ -42,7 +45,9 @@ public class TaskController {
         if (taskService.canTaskBePlaced(overlappingTasks)) {
             return taskMapper.mapTaskChangelistToDto(taskService.placeNewTask(task));
         } else {
-            return null;
+            var message = "Cannot move high priority tasks: " + overlappingTasks.stream()
+                    .filter(not(taskService::isTaskAdjustable)).toList();
+            throw new BadRequestException(message);
         }
     }
 

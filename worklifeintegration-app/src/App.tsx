@@ -14,7 +14,7 @@ function App() {
   return (
     <GlobalStateContext.Provider value={{ state: state, send: send }}>
       <div className="App">
-      {state.context.task_data !== null && <RootView state={state} send={send}/>}
+      {state.context.task_data !== null && <RootView state={state} send={send as any}/>}
     </div>
   
     </GlobalStateContext.Provider>

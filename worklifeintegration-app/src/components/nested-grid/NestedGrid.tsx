@@ -36,7 +36,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
 
     return (
         <Grid height="100%" ref={containerRef} item xs={1.5} sx={{bgcolor: 'blue' }}>
-            <Box sx={{ height: "100%", width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
+            <Box sx={{ width: '100%', maxWidth: 200, bgcolor: 'cyan' }}>
                 <Box sx={{ my: 3, mx: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
@@ -52,11 +52,7 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 console.log(task.end);
                 console.log('task.end.diff(task.start, "days")');
                 console.log(task.end.diff(task.start));
-                return (<TaskItem task={{
-                    name: task.name,
-                    start: task.start,
-                    end: task.end
-                }} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
+                return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
             })}
         </Grid> 
     );

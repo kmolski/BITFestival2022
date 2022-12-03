@@ -5,6 +5,9 @@ export type Task = {
     name: string
     start: moment.Moment
     end: moment.Moment
+    placeId: number,
+    placementLimitId: number,
+    taskPriority: string,
 }
 
 export type TaskCollection = {
@@ -31,16 +34,23 @@ function arrayTimeToStr(array_time: number[]): string{
     return array_time[0].toString()+'-'+array_time[1].toString()+'-'+array_time[2].toString()+' '+array_time[3].toString()+':'+array_time[4].toString()
 }
 
+function rawTaskToTask(item: any): Task {
+    return {
+        name: item.title,
+        start: moment(item.startTime),
+        end: moment(item.endTime),
+        placeId: item.placeId,
+        placementLimitId: item.placementLimitId,
+        taskPriority: item.taskPriority,
+    }
+}
+
 export function getDay(task_list: any[], day: string): Task[]{
    const clean = task_list.filter((item) => {
     return moment(item.startTime).format('d') === day
 })
    const mapped_items = clean.map(item => {
-    return {
-    name: item.category, // todo: set correct value
-    start: moment(item.startTime),
-    end: moment(item.endTime),
-   }})
+    return rawTaskToTask(item)})
    return mapped_items;
 }
 
@@ -56,4 +66,8 @@ export function mapRawToTaskCollection(data: any): TaskCollection {
     };
     console.log("Mapping result", result);
     return result
+}
+
+export function rawDataToTaskList(data: any): Task[] {
+    return data.map((item: any) => rawTaskToTask(item))
 }

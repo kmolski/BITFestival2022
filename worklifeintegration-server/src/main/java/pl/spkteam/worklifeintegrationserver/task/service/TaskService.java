@@ -143,7 +143,7 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalStateException("No other tasks for the given day"));
         var endTime = startTime.plus(duration);
         if (endTime.toLocalTime().isAfter(movedTask.getPlacementLimit().getEndTime())) {
-            throw new BadRequestException("Cannot finish moved task today");
+            throw new BadRequestException("Cannot finish moved task today: " + movedTask);
         }
         return movedTask.setStartTime(startTime).setEndTime(endTime);
     }
@@ -159,7 +159,7 @@ public class TaskService {
         return overlappingTasks.stream().allMatch(this::isTaskAdjustable);
     }
 
-    private boolean isTaskAdjustable(Task task) {
+    public boolean isTaskAdjustable(Task task) {
         return !task.getTaskPriority().equals(Priority.HIGH);
     }
 }
