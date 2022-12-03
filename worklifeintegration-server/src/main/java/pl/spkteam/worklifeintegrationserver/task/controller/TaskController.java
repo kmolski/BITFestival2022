@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.spkteam.worklifeintegrationserver.task.dto.EntityListDto;
 import pl.spkteam.worklifeintegrationserver.task.dto.TaskChangelistDto;
-import pl.spkteam.worklifeintegrationserver.task.model.Task;
+import pl.spkteam.worklifeintegrationserver.task.dto.TaskDto;
+import pl.spkteam.worklifeintegrationserver.task.mapper.TaskMapper;
 import pl.spkteam.worklifeintegrationserver.task.repo.TaskRepository;
 import pl.spkteam.worklifeintegrationserver.task.service.TaskService;
 
@@ -20,20 +21,25 @@ public class TaskController {
     private final TaskRepository taskRepository;
 
     private final TaskService taskService;
+    private final TaskMapper taskMapper;
 
     @GetMapping
-    public EntityListDto<Task> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
-                                        @RequestParam(value = "end", required = false) LocalDateTime end) {
-        return new EntityListDto<>(taskService.getTasksInTimeInterval(start, end));
+    public EntityListDto<TaskDto> getTasks(@RequestParam(value = "start", required = false) LocalDateTime start,
+                                           @RequestParam(value = "end", required = false) LocalDateTime end) {
+        var dtoList = taskService.getTasksInTimeInterval(start, end).stream()
+                .map(taskMapper::mapTaskEntityToDto).toList();
+        return new EntityListDto<>(dtoList);
     }
 
     @GetMapping("/fromDay")
-    public EntityListDto<Task> getTasksFromDay(LocalDateTime date) {
-        return new EntityListDto<>(taskService.getTasksFromDay(date));
+    public EntityListDto<TaskDto> getTasksFromDay(LocalDateTime date) {
+        var dtoList = taskService.getTasksFromDay(date).stream().map(taskMapper::mapTaskEntityToDto).toList();
+        return new EntityListDto<>(dtoList);
     }
 
     @PostMapping
-    public TaskChangelistDto createTask(@Valid Task task) {
+    public TaskChangelistDto createTask(@Valid TaskDto taskDto) {
+        var task = taskMapper.mapTaskDtoToEntity(taskDto);
         var overlappingTasks = taskService.getTasksInTimeInterval(task.getStartTime(), task.getEndTime());
         if (taskService.canTaskBePlaced(overlappingTasks)) {
             return taskService.placeNewTask(task);
