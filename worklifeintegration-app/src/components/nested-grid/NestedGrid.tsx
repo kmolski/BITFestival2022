@@ -48,10 +48,10 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 </Box>
             </Box>
             {tasks.map((task) => {
-                console.log(task.start);
-                console.log(task.end);
-                console.log('task.end.diff(task.start, "days")');
-                console.log(task.end.diff(task.start));
+                // console.log(task.start);
+                // console.log(task.end);
+                // console.log('task.end.diff(task.start, "days")');
+                // console.log(task.end.diff(task.start));
                 return (<TaskItem task={task} height={task.end.diff(task.start, "hours")*oneHourEquivalentHeight}/>)
             })}
         </Grid> 
