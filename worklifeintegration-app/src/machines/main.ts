@@ -108,13 +108,14 @@ export const mainMachine = createMachine<MainContext>({
           return commitTask({blob: context.suggestion_data_dont_use})
         },
         onDone: {
-          target: 'wait',
-          actions: assign({ suggestion_data: (_context, event) => {
+          target: 'fetch',
+          cond:'isDataClear',
+          actions: assign({ suggestion_data: (_context, _event) => {
             console.log("Suggestion data commited");
             return [] },
-            suggestion_data_dont_use: (_context, event) => undefined
-          }
-          )
+            suggestion_data_dont_use: (_context, _event) => undefined,
+            task_data:  (_context, _event) => null,
+          })
         },
         onError: {
           target: 'wait', // todo: handle errors
@@ -140,6 +141,10 @@ export const mainMachine = createMachine<MainContext>({
     isDataLoaded:  (context, event) => {
       console.log("IS DATA LOADED?", context.task_data !== null);
       return context.task_data !== null;
+    },
+    isDataClear:  (context, event) => {
+      console.log("IS DATA CLEAR?", context.task_data, context.task_data === null);
+      return context.task_data === null;
     },
   },
   actions: {

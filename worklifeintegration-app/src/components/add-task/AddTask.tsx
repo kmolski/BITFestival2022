@@ -11,6 +11,10 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment, { Moment } from 'moment';
 import { sendType, stateType } from '../../machines/types';
+import './AddTask.css'
+import { stateValuesEqual } from 'xstate/lib/State';
+import { Task } from '../../utils/task';
+import { TaskItem } from '../task-item/TaskItem';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -22,7 +26,21 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  margin: '12px',
 };
+
+function TaskContainer(props: {tasks: Task[]}){
+  
+
+  if (props.tasks.length === 0) return <></>;
+  
+  return <div>  
+    {props.tasks.map((task: Task) => <TaskItem task={task} height={500}/>)}
+</div>
+
+}
 
 export default function AddTask(props: {state: stateType, send: sendType}) {
   const [open, setOpen] = React.useState(false);
@@ -30,7 +48,8 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
   const handleClose = () => setOpen(false);
 
   const sendCommitMessage = () => {
-    props.send('COMMIT')
+    props.send('COMMIT');
+    setOpen(false);
   };
 
   const [title, setTitle] = React.useState("");
@@ -73,9 +92,11 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <TextField id="outlined-basic" label="Name" variant="outlined" onChange={handleTitleChange}/>
+          <TextField id="outlined-basic" className='Paded'
+          label="Name" variant="outlined" onChange={handleTitleChange}/>
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DesktopDatePicker
+                className='Paded'
                 label="Date"
                 inputFormat="MM/DD/YYYY"
                 value={timeStart}
@@ -83,21 +104,23 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
                 renderInput={(params) => <TextField {...params} />}
                 />
                 <TimePicker
+                className='Paded'
                 label="Start time"
                 value={timeStart}
                 onChange={handleChangeTimeStart}
                 renderInput={(params) => <TextField {...params} />}
                 />
                 <TimePicker
+                className='Paded'
                 label="End time"
                 value={timeEnd}
                 onChange={handleChangeTimeEnd}
                 renderInput={(params) => <TextField {...params} />}
                 />
             </LocalizationProvider>
-            <button onClick={sendTaskMessage}>Add the task</button>
+            <Button variant="contained" onClick={sendTaskMessage}>Find time</Button>
             <button onClick={sendCommitMessage}>Commit the task</button>
-            {props.state.context.suggestion_data.map(item => item.name)}
+            <TaskContainer tasks={props.state.context.suggestion_data}/>
         </Box>
       </Modal>
     </div>
