@@ -53,14 +53,15 @@ class TaskServiceTest {
             Month.DECEMBER, 3, 16, 15, 0);
 
     private final LocalDateTime startDoctorAppointment = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 11, 00, 0);
+            Month.DECEMBER, 3, 11, 0, 0);
 
     private final LocalDateTime endDoctorAppointment = LocalDateTime.of(2022,
-            Month.DECEMBER, 3, 13, 00, 0);
+            Month.DECEMBER, 3, 13, 0, 0);
+
+    private final LocalDateTime endWorkDateTimeAdded = LocalDateTime.of(2022,
+            Month.DECEMBER, 3, 16, 0, 0);
 
     private final Duration oneHour = Duration.ofMinutes(60);
-
-    private final Task testTask = createExampleTask();
 
     private final Place place = createExamplePlace();
 
@@ -79,7 +80,7 @@ class TaskServiceTest {
                 Month.DECEMBER, 3, 15, 0, 0);
         Pair<LocalDateTime, LocalDateTime> expectedEmptyPeriod = Pair.of(expectedStartTime, expectedEndTime);
 
-        Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, testTask);
+        Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, createExampleTask());
 
         Assertions.assertEquals(expectedEmptyPeriod, actualEmptyPeriod);
     }
@@ -93,7 +94,7 @@ class TaskServiceTest {
                 Month.DECEMBER, 3, 18, 15, 0);
         Pair<LocalDateTime, LocalDateTime> expectedEmptyPeriod = Pair.of(expectedStartTime, expectedEndTime);
 
-        Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, testTask);
+        Pair<LocalDateTime, LocalDateTime> actualEmptyPeriod = taskService.searchForEmptyPeriods(beforeDateTime, oneHour, createExampleTask());
 
         Assertions.assertEquals(expectedEmptyPeriod, actualEmptyPeriod);
     }
@@ -117,7 +118,7 @@ class TaskServiceTest {
     @Test
     void changeAlreadyExistingTasksAllDayCaseTest() {
 
-        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleLongerThanWorkDayTask(), Collections.singleton(testTask));
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleLongerThanWorkDayTask(), Collections.singleton(createExampleTask()));
 
         Assertions.assertNull(actualTasks);
     }
@@ -128,22 +129,23 @@ class TaskServiceTest {
         expectedTasks.add(createExampleTask());
         expectedTasks.add(createExampleTask2());
 
-        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleTask2(), Collections.singleton(testTask));
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleTask2(), Collections.singleton(createExampleTask()));
 
         Assertions.assertEquals(expectedTasks, actualTasks);
     }
 
     @Test
     void changeAlreadyExistingTasksDuringWorkCaseTest() {
-      /*  Collection<Task> expectedTasks = new ArrayList<>();
-        expectedTasks.add(createExampleTask());
+        Collection<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(createFragmentedTask1());
+        expectedTasks.add(createFragmentedTask2());
         expectedTasks.add(createExampleDuringWorkDayTask());
-        //tutaj 2 changed
+
         Mockito.when(taskRepository.findAll()).thenReturn(Collections.singleton(createExampleTask()));
 
-        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleDuringWorkDayTask(), Collections.singleton(testTask));
+        Collection<Task> actualTasks = taskService.changeAlreadyExistingTasks(createExampleDuringWorkDayTask(), Collections.singleton(createExampleTask()));
 
-        Assertions.assertEquals(expectedTasks, actualTasks);*/
+        Assertions.assertEquals(expectedTasks, actualTasks);
     }
 
 
@@ -194,6 +196,26 @@ class TaskServiceTest {
                 .category(Category.HEALTH_APPOINTMENT)
                 .endTime(endDoctorAppointment)
                 .place(createExamplePlace2())
+                .build();
+    }
+
+    private Task createFragmentedTask1() {
+        return Task.builder()
+                .startTime(startWorkDateTime)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(startDoctorAppointment)
+                .place(place)
+                .build();
+    }
+
+    private Task createFragmentedTask2() {
+        return Task.builder()
+                .startTime(endDoctorAppointment)
+                .taskPriority(Priority.LOW)
+                .category(Category.OFFICE_WORK)
+                .endTime(endWorkDateTimeAdded)
+                .place(place)
                 .build();
     }
 
