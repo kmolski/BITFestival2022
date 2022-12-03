@@ -21,10 +21,10 @@ public class TaskRepositoryImpl implements TaskRepositoryExt {
         var root = query.from(Task.class);
 
         if (start != null) {
-            cb.and(cb.lessThan(root.get("startTime"), start));
+            cb.and(cb.lessThan(root.get("startTime"), end));
         }
         if (end != null) {
-            cb.and(cb.greaterThan(root.get("endTime"), end));
+            cb.and(cb.greaterThan(root.get("endTime"), start));
         }
 
         return entityManager.createQuery(query).getResultList();
