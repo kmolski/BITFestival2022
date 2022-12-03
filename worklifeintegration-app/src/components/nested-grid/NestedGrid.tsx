@@ -7,7 +7,7 @@ import './NestedGrid.css';
 import { useState } from 'react';
 import { TaskItem } from '../task-item/TaskItem';
 import { emptyTaskCollection, Task, TaskCollection } from '../../utils/task';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -40,9 +40,9 @@ function Column(props:{columnName:string, taskList:Task[]}) {
                 <Box sx={{ my: 3, mx: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Typography gutterBottom variant="h6" component="div">
+                            <Button component="div">
                             {props.columnName}
-                            </Typography>
+                            </Button>
                         </Grid>
                     </Grid>
                 </Box>

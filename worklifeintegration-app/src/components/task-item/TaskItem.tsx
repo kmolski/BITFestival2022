@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import { Card } from '@mui/material';
 
 {/* <div className="TaskItem">
 <>{props.task.name}</>
@@ -18,7 +19,7 @@ function setState(){
 export function TaskItem(props: {task: Task, height:number}) {
   const [show, setShow] = useState(false);
   return (
-    <Box sx={{ width: '100%', height: '100%', maxWidth: 200, 
+    <Card sx={{ width: '100%', height: '100%', maxWidth: 200, 
     maxHeight:props.height, bgcolor: 'cyan' }} onClick={() => setState()}>
         <Grid container alignItems="center">
           <Grid item xs>
@@ -30,6 +31,6 @@ export function TaskItem(props: {task: Task, height:number}) {
         <Typography color="text.secondary" variant="body2">
           Godzina taska
         </Typography>
-      </Box>
+    </Card>
   );
 }
