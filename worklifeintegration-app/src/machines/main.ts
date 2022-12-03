@@ -4,7 +4,7 @@ import moment from 'moment'
 import { fetchWeek } from '../utils/endpoint';
 import { log, pure } from 'xstate/lib/actions';
 
-interface MainContext {
+export interface MainContext {
   // todo: set context that makes sense
   task_data: TaskCollection | null ;
   week_start: moment.Moment;
