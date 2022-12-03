@@ -102,7 +102,7 @@ export default function AddTask(props: {state: stateType, send: sendType}) {
 
   return (
     <div>
-      <Button onClick={handleOpen}>Add task</Button>
+      <Button variant="contained" onClick={handleOpen}>+ Create</Button>
       <Modal
         open={open}
         onClose={handleClose}
